@@ -1,0 +1,106 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+
+      <mat-stepper [orientation]="(stepperOrientation | async)!">
+        <ng-template matStepperIcon="edit">
+          <mat-icon>done</mat-icon>
+        </ng-template>
+        <mat-step [stepControl]="usernameFormGroup" label="Pick a username" [editable]="true">
+          <form class="row justify-content-center" [formGroup]="usernameFormGroup">
+            <mat-label class="col-md-5">Username cannot be changed later</mat-label>
+            <div class="col-md-12"></div>
+            <mat-form-field class="col-md-5">
+              <mat-label>Pick a username</mat-label>
+              <input matInput #usernamefield formControlName="username" placeholder="johndoe12"
+                (input)="usernamefield.value=userNameFixer(usernamefield.value)" maxlength="16" required>
+            </mat-form-field>
+
+            <div>
+              <button mat-button matStepperNext>Next</button>
+            </div>
+          </form>
+        </mat-step>
+
+        <mat-step [stepControl]="detailsFormGroup" label="Fill out your details">
+          <form [formGroup]="detailsFormGroup">
+            <mat-form-field class="col-md-6">
+              <mat-label>First Name</mat-label>
+              <input matInput placeholder="John" formControlName="firstName" required>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-6">
+              <mat-label>Last Name</mat-label>
+              <input matInput placeholder="Doe" formControlName="lastName" required>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-6">
+              <mat-label>Password</mat-label>
+              <input matInput placeholder="Enter a password" formControlName="password" required>
+            </mat-form-field>
+
+            <mat-form-field class="col-md-6">
+              <mat-label>Phone</mat-label>
+              <input matInput placeholder="1234597890" formControlName="phone" required>
+            </mat-form-field>
+
+            <mat-form-field class="col-12">
+              <mat-label>Bio</mat-label>
+              <textarea matInput placeholder="I'm available to chat!" formControlName="bio" required></textarea>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Enter your email</mat-label>
+              <input matInput formControlName="email" #email placeholder="johndoe@example.com" required>
+            </mat-form-field>
+            <div>
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-raised-button color="primary" matStepperNext [disabled]="email.value==''"
+                (click)="sendOTP()">Send OTP</button>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- <mat-step [stepControl]="emailFormGroup" label="Verify your Email">
+          <form [formGroup]="emailFormGroup">
+            <mat-form-field>
+              <mat-label>Enter your email</mat-label>
+              <input matInput formControlName="email" #email placeholder="johndoe@example.com" required>
+            </mat-form-field>
+            <div>
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-raised-button color="primary" matStepperNext [disabled]="email.value==''"
+                (click)="sendOTP()">Send OTP</button>
+            </div>
+          </form>
+        </mat-step> -->
+
+        <mat-step [stepControl]="otpFormGroup" label="Enter OTP">
+          <form [formGroup]="otpFormGroup">
+            <mat-label>Enter the 6 digit OTP we sent to your email address</mat-label>
+            <div class="col-12"></div>
+            <mat-form-field>
+              <mat-label>Enter OTP</mat-label>
+              <input matInput formControlName="otp" #otp placeholder="123456" required>
+            </mat-form-field>
+            <div>
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-raised-button color="primary" matStepperNext [disabled]="email.value==''"
+                (click)="verifyOTP()">Verify</button>
+            </div>
+          </form>
+        </mat-step>
+
+        <mat-step>
+          <ng-template matStepLabel>Done</ng-template>
+          <mat-progress-spinner mode="indeterminate" *ngIf="spinnerEnable"></mat-progress-spinner>
+          <div *ngIf="otpsuccess">Congrats your account has been created!</div>
+          <div *ngIf="otpfailure">Email Verification Failed!</div>
+          <div>
+            <button mat-button matStepperPrevious>Back</button>
+          </div>
+        </mat-step>
+      </mat-stepper>
+
+    </div>
+  </div>
+</div>
