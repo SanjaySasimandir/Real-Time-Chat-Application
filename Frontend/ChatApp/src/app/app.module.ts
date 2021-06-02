@@ -45,6 +45,7 @@ import { LandingComponent } from './landing/landing.component';
 import { RegisterComponent } from './register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { LoginComponent } from './login/login.component';
 
 const materialModules = [
   CdkTreeModule,
@@ -89,7 +90,8 @@ const materialModules = [
     FooterComponent,
     RoutesComponent,
     LandingComponent,
-    RegisterComponent
+    RegisterComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

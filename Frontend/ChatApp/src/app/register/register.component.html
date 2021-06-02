@@ -2,7 +2,7 @@
   <div class="row justify-content-center">
     <div class="col-md-10">
 
-      <mat-stepper [orientation]="(stepperOrientation | async)!">
+      <mat-stepper [orientation]="(stepperOrientation | async)!" linear>
         <ng-template matStepperIcon="edit">
           <mat-icon>done</mat-icon>
         </ng-template>
@@ -23,7 +23,7 @@
         </mat-step>
 
         <mat-step [stepControl]="detailsFormGroup" label="Fill out your details">
-          <form [formGroup]="detailsFormGroup">
+          <form class="row justify-content-center" [formGroup]="detailsFormGroup">
             <mat-form-field class="col-md-6">
               <mat-label>First Name</mat-label>
               <input matInput placeholder="John" formControlName="firstName" required>
@@ -52,10 +52,10 @@
               <mat-label>Enter your email</mat-label>
               <input matInput formControlName="email" #email placeholder="johndoe@example.com" required>
             </mat-form-field>
-            <div>
-              <button mat-button matStepperPrevious>Back</button>
-              <button mat-raised-button color="primary" matStepperNext [disabled]="email.value==''"
-                (click)="sendOTP()">Send OTP</button>
+            <div class="col-12 row justify-content-end align-items-end">
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-raised-button color="primary" matStepperNext [disabled]="email.value==''"
+                  (click)="sendOTP()">Send OTP</button>
             </div>
           </form>
         </mat-step>
@@ -97,6 +97,7 @@
           <div *ngIf="otpfailure">Email Verification Failed!</div>
           <div>
             <button mat-button matStepperPrevious>Back</button>
+            <button mat-raised-button color="primary" routerLink="/login">Login</button>
           </div>
         </mat-step>
       </mat-stepper>
