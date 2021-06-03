@@ -1,107 +1,155 @@
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-10">
+<div class="container-fluid">
+  <div class="row justify-content-center align-items-center register-outer-wrapper">
 
-      <mat-stepper [orientation]="(stepperOrientation | async)!" linear>
-        <ng-template matStepperIcon="edit">
-          <mat-icon>done</mat-icon>
-        </ng-template>
-        <mat-step [stepControl]="usernameFormGroup" label="Pick a username" [editable]="true">
-          <form class="row justify-content-center" [formGroup]="usernameFormGroup">
-            <mat-label class="col-md-5">Username cannot be changed later</mat-label>
-            <div class="col-md-12"></div>
-            <mat-form-field class="col-md-5">
-              <mat-label>Pick a username</mat-label>
-              <input matInput #usernamefield formControlName="username" placeholder="johndoe12"
-                (input)="usernamefield.value=userNameFixer(usernamefield.value)" maxlength="16" required>
-            </mat-form-field>
+    <!-- Username Card -->
+    <mat-card class="col-md-4 row justify-content-center align-items-center" *ngIf="usernamePage">
+      <mat-card-title class="text-center">
+        Register
+      </mat-card-title>
+      <mat-card-subtitle class="text-center">
+        Pick a username to continue
+      </mat-card-subtitle>
+      <form (ngSubmit)="openNamePage()">
+        <mat-form-field class="col-12" appearance="outline">
+          <mat-icon matPrefix color="primary">alternate_email</mat-icon>
+          <mat-label>Create a username</mat-label>
+          <input matInput [formControl]="username" placeholder="johndoe12" (input)="userNameFixer()" minlength="5"
+            maxlength="16" autofocus required>
+          <mat-error *ngIf="usernameTaken">This username is already taken, please choose another.</mat-error>
+        </mat-form-field>
+        <div class="col-12 d-flex justify-content-between">
+          <button mat-button color="primary" type="button" routerLink="/signup">Already have an account?</button>
+          <button mat-raised-button [disabled]="(this.username.invalid || usernameLoginButtonDisabled) || usernameTaken"
+            type="submit" color="primary">Next</button>
+        </div>
+      </form>
+    </mat-card>
 
-            <div>
-              <button mat-button matStepperNext>Next</button>
-            </div>
-          </form>
-        </mat-step>
+    <!-- Details Card -->
+    <mat-card class="col-md-4 row justify-content-center align-items-center" *ngIf="detailsPage">
+      <mat-card-title class="text-center">
+        Test
+      </mat-card-title>
+      <mat-card-subtitle class="text-center">
+        entername
+      </mat-card-subtitle>
+      <form (ngSubmit)="detailsPage=false; passwordPage=true">
+        <mat-form-field class="col-12" appearance="outline">
+          <mat-label>First Name</mat-label>
+          <input matInput [formControl]="firstName" placeholder="John" minlength="1" maxlength="35" autofocus required>
+          <mat-error *ngIf="this.firstName.invalid">Please enter your first name</mat-error>
+        </mat-form-field>
 
-        <mat-step [stepControl]="detailsFormGroup" label="Fill out your details">
-          <form class="row justify-content-center" [formGroup]="detailsFormGroup">
-            <mat-form-field class="col-md-6">
-              <mat-label>First Name</mat-label>
-              <input matInput placeholder="John" formControlName="firstName" required>
-            </mat-form-field>
+        <mat-form-field class="col-12" appearance="outline">
+          <mat-label>Last Name</mat-label>
+          <input matInput [formControl]="lastName" placeholder="Doe" minlength="1" maxlength="35" required>
+          <mat-error *ngIf="this.lastName.invalid">Please enter your last name</mat-error>
+        </mat-form-field>
 
-            <mat-form-field class="col-md-6">
-              <mat-label>Last Name</mat-label>
-              <input matInput placeholder="Doe" formControlName="lastName" required>
-            </mat-form-field>
+        <mat-form-field class="col-12" appearance="outline">
+          <mat-label>Phone</mat-label>
+          <input type="phone" matInput [formControl]="phone" placeholder="1234567890" maxlength="12" autofocus required>
+          <mat-error *ngIf="this.phone.invalid">Please enter your phone number</mat-error>
+        </mat-form-field>
 
-            <mat-form-field class="col-md-6">
-              <mat-label>Password</mat-label>
-              <input matInput placeholder="Enter a password" formControlName="password" required>
-            </mat-form-field>
+        <mat-form-field class="col-12" appearance="outline">
+          <mat-label>Bio</mat-label>
+          <textarea matInput [formControl]="bio" maxlength="120" placeholder="I'm available to chat"
+            required></textarea>
+          <mat-error *ngIf="this.bio.invalid">Please enter a bio</mat-error>
+        </mat-form-field>
+        <div class="col-12 d-flex justify-content-between">
+          <button mat-button color="primary" type="button"
+            (click)="detailsPage=!detailsPage;usernamePage=!usernamePage">Back</button>
+          <button mat-raised-button
+            [disabled]="this.firstName.invalid || this.lastName.invalid || this.phone.invalid || this.bio.invalid"
+            type="submit" color="primary">Next</button>
+        </div>
+      </form>
+    </mat-card>
 
-            <mat-form-field class="col-md-6">
-              <mat-label>Phone</mat-label>
-              <input matInput placeholder="1234597890" formControlName="phone" required>
-            </mat-form-field>
+    <!-- Password Card -->
+    <mat-card class="col-md-4 row justify-content-center align-items-center" *ngIf="passwordPage">
+      <mat-card-title class="text-center">
+        Password
+      </mat-card-title>
+      <mat-card-subtitle class="text-center">
+        Enter Details
+      </mat-card-subtitle>
+      <form (ngSubmit)="passwordPage=false; emailPage=true;">
+        <mat-form-field class="col-12" appearance="outline">
+          <mat-icon matPrefix color="primary">lock</mat-icon>
+          <mat-label>Create a password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="johndoe12" [formControl]="password"
+            placeholder="Enter your password" minlength="6" maxlength="20" required>
+          <button mat-icon-button matSuffix *ngIf="this.password.value!=''" type="button"
+            (click)="this.password.setValue('')">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-error *ngIf="this.password.invalid">Choose a strong password</mat-error>
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+            <mat-icon *ngIf="hidePassword">visibility_off</mat-icon>
+            <mat-icon *ngIf="!hidePassword">visibility</mat-icon>
+          </button>
+        </mat-form-field>
 
-            <mat-form-field class="col-12">
-              <mat-label>Bio</mat-label>
-              <textarea matInput placeholder="I'm available to chat!" formControlName="bio" required></textarea>
-            </mat-form-field>
-            <mat-form-field>
-              <mat-label>Enter your email</mat-label>
-              <input matInput formControlName="email" #email placeholder="johndoe@example.com" required>
-            </mat-form-field>
-            <div class="col-12 row justify-content-end align-items-end">
-                <button mat-button matStepperPrevious>Back</button>
-                <button mat-raised-button color="primary" matStepperNext [disabled]="email.value==''"
-                  (click)="sendOTP()">Send OTP</button>
-            </div>
-          </form>
-        </mat-step>
+        <div class="col-12 d-flex justify-content-between">
+          <button mat-button color="primary" type="button"
+            (click)="passwordPage=!passwordPage; detailsPage=!detailsPage">Back</button>
+          <button mat-raised-button [disabled]="this.password.invalid" type="submit" (click)="test()"
+            color="primary">Next</button>
+        </div>
+      </form>
+    </mat-card>
 
-        <!-- <mat-step [stepControl]="emailFormGroup" label="Verify your Email">
-          <form [formGroup]="emailFormGroup">
-            <mat-form-field>
-              <mat-label>Enter your email</mat-label>
-              <input matInput formControlName="email" #email placeholder="johndoe@example.com" required>
-            </mat-form-field>
-            <div>
-              <button mat-button matStepperPrevious>Back</button>
-              <button mat-raised-button color="primary" matStepperNext [disabled]="email.value==''"
-                (click)="sendOTP()">Send OTP</button>
-            </div>
-          </form>
-        </mat-step> -->
+    <!-- Email Card -->
+    <mat-card class="col-md-4 row justify-content-center align-items-center" *ngIf="emailPage">
+      <mat-card-title class="text-center">
+        Email
+      </mat-card-title>
+      <mat-card-subtitle class="text-center">
+        Email address
+      </mat-card-subtitle>
+      <form (ngSubmit)="sendOtp()">
+        <mat-form-field class="col-12" appearance="outline">
+          <mat-icon matPrefix color="primary">email_outline</mat-icon>
+          <mat-label>Enter your email address</mat-label>
+          <input matInput [formControl]="email" placeholder="johndoe@example.com" (input)="emailTaken=false" autofocus required>
+          <mat-error *ngIf="emailTaken">This email is already registered, use another or sign in.</mat-error>
+          <mat-error *ngIf="this.email.invalid">Please enter a valid email</mat-error>
+        </mat-form-field>
+        <div class="col-12 d-flex justify-content-between">
+          <button mat-button color="primary" type="button"
+            (click)="emailPage=!emailPage; passwordPage=!passwordPage">Back</button>
+          <button mat-raised-button [disabled]="this.email.invalid || emailTaken || verifyButtonDisable" type="submit"
+            color="primary">{{verifyButtonDisable ? 'Loading' :'Verify Email'}}</button>
+        </div>
+      </form>
+    </mat-card>
 
-        <mat-step [stepControl]="otpFormGroup" label="Enter OTP">
-          <form [formGroup]="otpFormGroup">
-            <mat-label>Enter the 6 digit OTP we sent to your email address</mat-label>
-            <div class="col-12"></div>
-            <mat-form-field>
-              <mat-label>Enter OTP</mat-label>
-              <input matInput formControlName="otp" #otp placeholder="123456" required>
-            </mat-form-field>
-            <div>
-              <button mat-button matStepperPrevious>Back</button>
-              <button mat-raised-button color="primary" matStepperNext [disabled]="email.value==''"
-                (click)="verifyOTP()">Verify</button>
-            </div>
-          </form>
-        </mat-step>
+    <!-- OTP Card -->
+    <mat-card class="col-md-4 row justify-content-center align-items-center" *ngIf="otpPage">
+      <mat-card-title class="text-center">
+        OTP
+      </mat-card-title>
+      <mat-card-subtitle class="text-center">
+        Enter the OTP you recieved in your email
+      </mat-card-subtitle>
+      <form (ngSubmit)="openNamePage()">
+        <mat-form-field class="col-12" appearance="outline">
+          <mat-icon matPrefix color="primary">email_outline</mat-icon>
+          <mat-label>Create a username</mat-label>
+          <input matInput [formControl]="username" placeholder="johndoe12" (input)="userNameFixer()" minlength="5"
+            maxlength="16" autofocus required>
+          <mat-error *ngIf="usernameTaken">This username is already taken, please choose another.</mat-error>
+        </mat-form-field>
+        <div class="col-12 d-flex justify-content-between">
+          <button mat-button color="primary" type="button" routerLink="/signup">Already have an account?</button>
+          <button mat-raised-button [disabled]="(this.username.invalid || usernameLoginButtonDisabled) || usernameTaken"
+            type="submit" color="primary">Next</button>
+        </div>
+      </form>
+    </mat-card>
 
-        <mat-step>
-          <ng-template matStepLabel>Done</ng-template>
-          <mat-progress-spinner mode="indeterminate" *ngIf="spinnerEnable"></mat-progress-spinner>
-          <div *ngIf="otpsuccess">Congrats your account has been created!</div>
-          <div *ngIf="otpfailure">Email Verification Failed!</div>
-          <div>
-            <button mat-button matStepperPrevious>Back</button>
-            <button mat-raised-button color="primary" routerLink="/login">Login</button>
-          </div>
-        </mat-step>
-      </mat-stepper>
-
-    </div>
   </div>
 </div>

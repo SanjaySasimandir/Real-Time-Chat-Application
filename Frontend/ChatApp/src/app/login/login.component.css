@@ -5,18 +5,18 @@
 }
 
 mat-card-title {
-    margin: 2rem 0 1rem 0!important;
+    margin: 2rem 0 0rem 0!important;
 }
 
 mat-card-subtitle {
-    margin: 1rem 0 2rem 0!important;
+    margin: 0.75rem 0 2rem 0!important;
 }
 
-.container-fluid{
-    background:#fafafa;
+.container-fluid {
+    background: #fafafa;
 }
+
 mat-card {
-    /* background: #fafafa; */
     padding-bottom: 2rem !important;
 }
 
@@ -28,6 +28,6 @@ button {
     width: auto;
 }
 
-mat-form-field :hover {
-    border-color: aqua !important;
+mat-chip:hover {
+    cursor: pointer;
 }

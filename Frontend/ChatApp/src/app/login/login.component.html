@@ -7,17 +7,18 @@
             <mat-card-subtitle class="text-center">
                 to continue
             </mat-card-subtitle>
-
-            <mat-form-field class="col-12" appearance="outline">
-                <mat-icon matPrefix color="primary">alternate_email</mat-icon>
-                <mat-label>Enter your username</mat-label>
-                <input matInput [formControl]="username" placeholder="johndoe12" maxlength="16" autofocus required>
-            </mat-form-field>
-            <div class="col-12 d-flex justify-content-between">
-                <button mat-button color="primary" routerLink="signup">Create an account</button>
-                <button mat-raised-button [disabled]="this.username.invalid" color="primary"
-                    (click)="usernamePage=!usernamePage">Next</button>
-            </div>
+            <form (ngSubmit)="this.usernamePage = !this.usernamePage">
+                <mat-form-field class="col-12" appearance="outline">
+                    <mat-icon matPrefix color="primary">alternate_email</mat-icon>
+                    <mat-label>Enter your username</mat-label>
+                    <input matInput [formControl]="username" placeholder="johndoe12" maxlength="16" autofocus required>
+                </mat-form-field>
+                <div class="col-12 d-flex justify-content-between">
+                    <button mat-button color="primary" type="button" routerLink="/signup">Create an account</button>
+                    <button mat-raised-button [disabled]="this.username.invalid" type="submit"
+                        color="primary">Next</button>
+                </div>
+            </form>
         </mat-card>
 
         <mat-card class="col-md-4 row justify-content-center align-items-center" *ngIf="!usernamePage">
@@ -31,25 +32,28 @@
                     </mat-chip>
                 </mat-chip-list>
             </mat-card-subtitle>
+            <form (ngSubmit)="passwordSubmit()">
+                <mat-form-field class="col-12" appearance="outline">
+                    <mat-icon matPrefix color="primary">lock</mat-icon>
+                    <mat-label>Enter your password</mat-label>
+                    <input matInput [type]="hidePassword ? 'password' : 'text'" [formControl]="password"
+                        placeholder="Enter your password" minlength="6" maxlength="20" required>
+                    <button mat-icon-button matSuffix *ngIf="this.password.value!=''"
+                        (click)="this.password.setValue('')">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+                        <mat-icon *ngIf="hidePassword">visibility_off</mat-icon>
+                        <mat-icon *ngIf="!hidePassword">visibility</mat-icon>
+                    </button>
+                </mat-form-field>
 
-            <mat-form-field class="col-12" appearance="outline">
-                <mat-icon matPrefix color="primary">lock</mat-icon>
-                <mat-label>Enter your password</mat-label>
-                <input matInput [type]="hidePassword ? 'password' : 'text'" [formControl]="password"
-                    placeholder="Enter your password" maxlength="16" required>
-                <button mat-icon-button matSuffix *ngIf="this.password.value!=''" (click)="this.password.setValue('')">
-                    <mat-icon>close</mat-icon>
-                </button>
-                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
-                    <mat-icon *ngIf="hidePassword">visibility_off</mat-icon>
-                    <mat-icon *ngIf="!hidePassword">visibility</mat-icon>
-                </button>
-            </mat-form-field>
-
-            <div class=" col-12 d-flex justify-content-between">
-                <button mat-button color="primary" (click)="usernamePage=!usernamePage">Back</button>
-                <button mat-raised-button color="primary" [disabled]="this.password.invalid">Login</button>
-            </div>
+                <div class=" col-12 d-flex justify-content-between">
+                    <button mat-button color="primary" type="button" (click)="usernamePage=!usernamePage">Back</button>
+                    <button mat-raised-button color="primary" type="submit"
+                        [disabled]="this.password.invalid">Login</button>
+                </div>
+            </form>
         </mat-card>
 
     </div>

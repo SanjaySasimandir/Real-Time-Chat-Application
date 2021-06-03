@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { UserauthService } from '../services/userauth.service';
 
 @Component({
   selector: 'app-login',
@@ -8,7 +10,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
 
-  constructor() { }
+  constructor(private userAuth: UserauthService, private router: Router) { }
 
 
   username = new FormControl('', Validators.required);
@@ -16,6 +18,16 @@ export class LoginComponent implements OnInit {
 
   usernamePage = true;
   hidePassword = true;
+
+
+  passwordSubmit() {
+    console.log('here')
+    this.userAuth.loginUser(this.username.value, this.password.value).subscribe(status => {
+      if (status.message == "success") {
+        this.router.navigate(['/']);
+      }
+    })
+  }
 
   ngOnInit(): void {
   }

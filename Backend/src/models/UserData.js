@@ -11,7 +11,9 @@ const UserSchema = new Schema({
     availability: String,
     phone: String,
     picture: String,
-    profileSettings: Array
+    profileSettings: Array,
+    username: String,
+    password: String
 });
 
 var UserData = mongoose.model('userdata', UserSchema);

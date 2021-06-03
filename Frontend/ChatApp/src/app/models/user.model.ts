@@ -8,6 +8,8 @@ export class UserModel {
         public availability: String,
         public phone: String,
         public picture: String,
-        public profileSettings: Array<25>
+        public profileSettings: Array<25>,
+        public username: String,
+        public password: String
     ) { }
 }

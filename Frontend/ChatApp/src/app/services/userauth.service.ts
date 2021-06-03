@@ -21,4 +21,16 @@ export class UserauthService {
     return this.http.post<any>('http://localhost:7000/users/signup', { "user": user });
   }
 
+  loginUser(username: string, password: string) {
+    return this.http.post<any>('http://localhost:7000/users/login', { "username": username, "password": password });
+  }
+
+  dupeUsernameCheck(username: string) {
+    return this.http.post<any>('http://localhost:7000/users/dupeUsernameCheck', { "username": username });
+  }
+
+  dupeEmailCheck(email: string) {
+    return this.http.post<any>('http://localhost:7000/users/dupeEmailCheck', { "email": email });
+  }
+
 }
