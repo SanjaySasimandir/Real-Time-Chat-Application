@@ -1,9 +1,5 @@
-import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
-import { Validators, FormBuilder, FormControl } from '@angular/forms';
-import { StepperOrientation } from '@angular/material/stepper';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Validators, FormControl } from '@angular/forms';
 import { UserModel } from '../models/user.model';
 import { UserauthService } from '../services/userauth.service';
 
@@ -14,60 +10,9 @@ import { UserauthService } from '../services/userauth.service';
 })
 export class RegisterComponent implements OnInit {
 
-  usernameFormGroup = this._formBuilder.group({
-    username: ['', [Validators.required]],
-  });
 
+  constructor(private userAuth: UserauthService) { }
 
-  detailsFormGroup = this._formBuilder.group({
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
-    phone: ['', Validators.required],
-    bio: ['', Validators.required]
-  });
-  // emailFormGroup = this._formBuilder.group({
-  //   email: ['', [Validators.required, Validators.email]]
-  // });
-  otpFormGroup = this._formBuilder.group({
-    otp: ['', [Validators.required, Validators.maxLength(6), Validators.minLength(6)]]
-  });
-  stepperOrientation: Observable<StepperOrientation>;
-
-  constructor(private _formBuilder: FormBuilder, private userAuth: UserauthService, breakpointObserver: BreakpointObserver) {
-    this.stepperOrientation = breakpointObserver.observe('(min-width: 800px)')
-      .pipe(map(({ matches }) => matches ? 'horizontal' : 'vertical'));
-  }
-
-
-
-  sendOTP() {
-    this.userAuth.initiateMailVerification(this.detailsFormGroup.value.email).subscribe(status => {
-      console.log(status)
-    })
-  }
-
-  otpsuccess: boolean = false;
-  otpfailure: boolean = false;
-  spinnerEnable: boolean = true;
-  verifyOTP() {
-    this.userAuth.verifyMailOtp(this.detailsFormGroup.value.email, this.otpFormGroup.value.otp).subscribe(status => {
-      if (status.message == "success") {
-        let user = new UserModel("", this.detailsFormGroup.value.firstName, this.detailsFormGroup.value.lastName, this.detailsFormGroup.value.email, this.detailsFormGroup.value.bio, "Online", this.detailsFormGroup.value.phone, "", [], this.usernameFormGroup.value.username, this.detailsFormGroup.value.password);
-        this.userAuth.signUpUser(user).subscribe(status => {
-          if (status.message == "success") {
-            this.otpsuccess = true;
-            this.spinnerEnable = false;
-          }
-        })
-      }
-      else {
-        this.otpfailure = true;
-        this.spinnerEnable = false;
-      }
-    })
-  }
 
   usernamePage = true;
   usernameTaken = false;
@@ -78,6 +23,8 @@ export class RegisterComponent implements OnInit {
   emailTaken = false;
   verifyButtonDisable = false;
   otpPage = false;
+  otphint = false;
+  regSuccess = false;
 
   hidePassword = true;
 
@@ -89,6 +36,7 @@ export class RegisterComponent implements OnInit {
   bio = new FormControl('', Validators.required);
   email = new FormControl('', [Validators.required, Validators.email]);
   password = new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]);
+  otp = new FormControl('', [Validators.required, Validators.maxLength(6), Validators.minLength(6)]);
 
   userNameFixer() {
     let value = this.username.value;
@@ -131,7 +79,8 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  sendOtp() {
+  checkEmail() {
+    console.log('here')
     this.verifyButtonDisable = true;
     this.userAuth.dupeEmailCheck(this.email.value).subscribe(status => {
       if (status.message == "found") {
@@ -142,8 +91,62 @@ export class RegisterComponent implements OnInit {
       else {
         this.emailPage = false;
         this.otpPage = true;
+        this.sendOTP();
+      }
+    });
+  }
+
+  sendOTP() {
+    this.userAuth.initiateMailVerification(this.email.value).subscribe(status => {
+      return;
+    });
+  }
+
+  verifyOTP() {
+    this.userAuth.verifyMailOtp(this.email.value, this.otp.value).subscribe(status => {
+      if (status.message == "success") {
+        let user = new UserModel("", this.firstName.value, this.lastName.value, this.email.value, this.bio.value, "Online", this.phone.value, "", [], this.username.value, this.password.value);
+        this.userAuth.signUpUser(user).subscribe(status => {
+          if (status.message == "success") {
+            this.otpPage = false;
+            this.regSuccess = true;
+          }
+        })
+      }
+      else {
+        this.otp.setErrors({ 'incorrect': true });
       }
     })
+  }
+
+  remainingTime = '';
+  timerOn = false;
+
+  timer(remaining: number) {
+    let m = Math.floor(remaining / 60).toString();
+    console.log(m)
+    let s = (remaining % 60).toString();
+    m = Number(m) < 10 ? '0' + m : m;
+    s = Number(s) < 10 ? '0' + s : s;
+    this.remainingTime = m + ':' + s;
+    remaining--;
+
+    if (remaining > 0 && this.timerOn) {
+      setTimeout(() => {
+        this.timer(remaining);
+      }, 1000);
+      return;
+    }
+
+    if (remaining == 0) {
+      this.remainingTime = '';
+      this.timerOn = false;
+    }
+
+    if (!this.timerOn) {
+      this.remainingTime = ''
+      return;
+    }
   }
 
   test() {

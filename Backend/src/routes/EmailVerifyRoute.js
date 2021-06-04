@@ -4,7 +4,7 @@ var EmailVerifyRoute = express.Router();
 var EmailVerifyData = require('../models/EmailVerifyData');
 
 function otpGenerator() {
-    return (Math.random() * 1000000).toString().substring(0, 6);
+    return (Math.random() * 100000000000).toString().substring(0, 6);
 }
 
 var nodemailer = require("nodemailer");
