@@ -13,7 +13,10 @@ const UserSchema = new Schema({
     picture: String,
     profileSettings: Array,
     username: String,
-    password: String
+    password: String,
+    contacts: Array,
+    mutedContacts: Array,
+    blockedContacts: Array
 });
 
 var UserData = mongoose.model('userdata', UserSchema);

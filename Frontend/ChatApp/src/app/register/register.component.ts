@@ -21,6 +21,7 @@ export class RegisterComponent implements OnInit {
   passwordPage = false;
   emailPage = false;
   emailTaken = false;
+  termsBox = false;
   verifyButtonDisable = false;
   otpPage = false;
   otphint = false;
@@ -105,7 +106,7 @@ export class RegisterComponent implements OnInit {
   verifyOTP() {
     this.userAuth.verifyMailOtp(this.email.value, this.otp.value).subscribe(status => {
       if (status.message == "success") {
-        let user = new UserModel("", this.firstName.value, this.lastName.value, this.email.value, this.bio.value, "Online", this.phone.value, "", [], this.username.value, this.password.value);
+        let user = new UserModel("", this.firstName.value, this.lastName.value, this.email.value, this.bio.value, "offline", this.phone.value, "", [], this.username.value, this.password.value, [], [], []);
         this.userAuth.signUpUser(user).subscribe(status => {
           if (status.message == "success") {
             this.otpPage = false;

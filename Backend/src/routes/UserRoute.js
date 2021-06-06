@@ -1,7 +1,8 @@
 const express = require('express');
 const userRouter = express.Router();
 
-const UserData = require('../models/UserData.js')
+const UserData = require('../models/UserData.js');
+var EmailVerifyData = require('../models/EmailVerifyData');
 
 userRouter.get('/test', (req, res) => {
     var userDetails = {
@@ -24,6 +25,7 @@ userRouter.post('/signup', (req, res) => {
     delete userDetails["_id"];
     var user = UserData(userDetails);
     user.save();
+    EmailVerifyData.findOneAndDelete({ email: user.email }).then(() => { })
     res.send({ "message": "success" });
 
 });
@@ -33,6 +35,22 @@ userRouter.post('/login', (req, res) => {
     var password = req.body.password;
     UserData.find({ username: username, password: password }).then(data => {
         if (data[0]) {
+            data[0].availability = "online";
+            data[0].save()
+            res.send({ "message": "success", "id": data[0]._id });
+        }
+        else {
+            res.send({ "message": "failure" });
+        }
+    })
+});
+
+userRouter.post('/logout', (req, res) => {
+    var id = req.body.id;
+    UserData.findById({ _id: id }).then(data => {
+        if (data[0]) {
+            data[0].availability = "offline";
+            data[0].save()
             res.send({ "message": "success" });
         }
         else {
@@ -64,6 +82,16 @@ userRouter.post('/dupeEmailCheck', (req, res) => {
         else {
             res.send({ "message": "notfound" });
         }
+    })
+});
+
+userRouter.get('/redousers', (req, res) => {
+    UserData.find().then(data => {
+        console.log(data[0]);
+        for(let i=0; i<data.length;i++){
+            data[i].save()
+        }
+        res.send('here')
     })
 });
 

@@ -31,3 +31,7 @@ button {
 mat-chip:hover {
     cursor: pointer;
 }
+
+.terms-conditions{
+    text-decoration: none;
+}

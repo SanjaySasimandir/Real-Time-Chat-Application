@@ -19,12 +19,18 @@ export class LoginComponent implements OnInit {
   usernamePage = true;
   hidePassword = true;
 
+  loginError = false;
 
   passwordSubmit() {
-    console.log('here')
     this.userAuth.loginUser(this.username.value, this.password.value).subscribe(status => {
       if (status.message == "success") {
-        this.router.navigate(['/']);
+        this.loginError = true;
+        localStorage.setItem('token', 'true');
+        localStorage.setItem('id', status.id);
+        this.router.navigate(['/chat']);
+      }
+      else {
+        this.loginError = true;
       }
     })
   }

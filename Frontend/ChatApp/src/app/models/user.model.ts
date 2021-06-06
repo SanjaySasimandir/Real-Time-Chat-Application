@@ -10,6 +10,9 @@ export class UserModel {
         public picture: String,
         public profileSettings: Array<25>,
         public username: String,
-        public password: String
+        public password: String,
+        public contacts: Array<10000>,
+        public mutedContacts:Array<10000>,
+        public blockedContacts:Array<10000>
     ) { }
 }
