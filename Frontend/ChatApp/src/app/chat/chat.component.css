@@ -1,0 +1,22 @@
+.outside-container {
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    flex-flow: column;
+}
+
+.chat-container {
+    border: 2px solid red;
+    flex: 1 !important;
+    height: auto !important;
+}
+
+mat-drawer-container {
+    height: 100%!important;
+}
+
+input{
+    border-radius: 3rem !important;
+}

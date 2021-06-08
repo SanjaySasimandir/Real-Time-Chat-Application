@@ -1,22 +1,50 @@
-<mat-drawer-container class="example-container" [hasBackdrop]="hasBackdrop.value" w-100 h-100>
-    <mat-drawer #drawer [mode]="mode.value">I'm a drawer</mat-drawer>
-    <mat-drawer-content>
-        <mat-form-field>
-            <mat-label>Sidenav mode</mat-label>
-            <mat-select #mode value="side">
-                <mat-option value="side">Side</mat-option>
-                <mat-option value="over">Over</mat-option>
-                <mat-option value="push">Push</mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Has backdrop</mat-label>
-            <mat-select #hasBackdrop>
-                <mat-option>Unset</mat-option>
-                <mat-option [value]="true">True</mat-option>
-                <mat-option [value]="false">False</mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button mat-raised-button (click)="drawer.toggle()">Toggle drawer</button>
-    </mat-drawer-content>
-</mat-drawer-container>
+<div class="container-fluid outside-container">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <div class="container-fluid">
+            <button mat-raised-button (click)="drawer.toggle()">Toggle drawer</button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" aria-current="page" href="#">Home</a>
+                    <a class="nav-link logoutButton" *ngIf="userAuth.loginStatus()" (click)="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid chat-container">
+        <mat-drawer-container>
+            <mat-drawer class="my-auto col-4" #drawer mode="side" opened>
+                <form (ngSubmit)="test()">
+                    <mat-form-field class="col-12" appearance="fill">
+                        <mat-label>Search users</mat-label>
+                        <input matInput [formControl]="searchItem" placeholder="johndoe12" maxlength="20" required>
+                        <button mat-icon-button matSuffix type="submit">
+                            <mat-icon>search</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </form>
+            </mat-drawer>
+            <mat-drawer-content>
+                <mat-form-field>
+                    <mat-label>Sidenav mode</mat-label>
+                    <mat-select #mode value="side">
+                        <mat-option value="side">Side</mat-option>
+                        <mat-option value="over">Over</mat-option>
+                        <mat-option value="push">Push</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Has backdrop</mat-label>
+                    <mat-select #hasBackdrop>
+                        <mat-option>Unset</mat-option>
+                        <mat-option [value]="true">True</mat-option>
+                        <mat-option [value]="false">False</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-drawer-content>
+        </mat-drawer-container>
+    </div>
+</div>
