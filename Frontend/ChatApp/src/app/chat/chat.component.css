@@ -11,12 +11,25 @@
     border: 2px solid red;
     flex: 1 !important;
     height: auto !important;
+    padding:0;
 }
 
 mat-drawer-container {
     height: 100%!important;
 }
+mat-drawer{
+    padding: 0.75rem;
+}
 
-input{
+input {
     border-radius: 3rem !important;
+}
+
+.card-avatar {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+}
+
+mat-card {
+    padding-bottom: 0;
 }

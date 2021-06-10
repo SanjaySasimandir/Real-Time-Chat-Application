@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserModel } from '../models/user.model';
 import { UserauthService } from '../services/userauth.service';
 
 @Component({
@@ -21,7 +22,26 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  searchItem = new FormControl('', Validators.required);
+  searchItem = new FormControl('');
+  searchResult = {
+    username: '',
+    firstName: '',
+    lastName: '',
+    picture: ''
+  }
+  searchLoadingEnable = false;
+  searchUser() {
+    this.searchLoadingEnable = true;
+    this.searchResult = { username: '', firstName: '', lastName: '', picture: '' };
+    this.userAuth.userSearch(this.searchItem.value).subscribe(data => {
+      if (data.user) {
+        this.searchLoadingEnable = false;
+        this.searchResult = data.user;
+      }
+      this.searchLoadingEnable = false;
+    });
+  }
+
   test() {
     console.log(this.searchItem.value);
   }

@@ -34,6 +34,10 @@ export class UserauthService {
     return this.http.post<any>('http://localhost:3000/users/dupeEmailCheck', { "email": email });
   }
 
+  userSearch(username: string) {
+    return this.http.post<any>('http://localhost:3000/users/searchuser', { "username": username });
+  }
+
   loginStatus() {
     if (localStorage.getItem('id') && localStorage.getItem('token')) {
       return true;

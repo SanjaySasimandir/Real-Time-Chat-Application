@@ -85,13 +85,32 @@ userRouter.post('/dupeEmailCheck', (req, res) => {
     })
 });
 
+userRouter.post('/searchuser', (req, res) => {
+    var username = req.body.username;
+    UserData.find({ username: username }).then(data => {
+        if (data[0]) {
+            dataToSend = {
+                username: data[0].username,
+                firstName: data[0].firstName,
+                lastName: data[0].lastName,
+                picture: data[0].picture
+
+            }
+            res.send({ "message": "found", "user": data[0] });
+        }
+        else {
+            res.send({ "message": "notfound" });
+        }
+    })
+});
+
 userRouter.get('/redousers', (req, res) => {
     UserData.find().then(data => {
         console.log(data[0]);
-        for(let i=0; i<data.length;i++){
+        for (let i = 0; i < data.length; i++) {
             data[i].save()
         }
-        res.send('here')
+        res.send('here');
     })
 });
 

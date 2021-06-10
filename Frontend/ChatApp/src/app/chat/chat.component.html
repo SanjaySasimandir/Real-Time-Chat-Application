@@ -17,33 +17,47 @@
     <div class="container-fluid chat-container">
         <mat-drawer-container>
             <mat-drawer class="my-auto col-4" #drawer mode="side" opened>
-                <form (ngSubmit)="test()">
+
+                <form (ngSubmit)="searchUser()">
                     <mat-form-field class="col-12" appearance="fill">
                         <mat-label>Search users</mat-label>
-                        <input matInput [formControl]="searchItem" placeholder="johndoe12" maxlength="20" required>
-                        <button mat-icon-button matSuffix type="submit">
+                        <input matInput [formControl]="searchItem" placeholder="johndoe12" (input)="searchUser()"
+                            maxlength="20">
+                        <button mat-icon-button matSuffix *ngIf="this.searchItem.value"
+                            (click)="this.searchItem.setValue('')" type="button">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                        <button mat-icon-button matSuffix [type]="this.searchItem.value ? 'submit': 'button'">
                             <mat-icon>search</mat-icon>
                         </button>
                     </mat-form-field>
                 </form>
+
+                <mat-card class="col-12" *ngIf="searchResult.username">
+                    <mat-card-header>
+                        <div mat-card-avatar class="card-avatar"
+                            style="background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg')">
+                        </div>
+                        <mat-card-title>{{searchResult.firstName}} {{searchResult.lastName}}</mat-card-title>
+                        <mat-card-subtitle>@{{searchResult.username}}</mat-card-subtitle>
+                    </mat-card-header>
+                </mat-card>
+
+                <mat-card class="col-12" *ngIf="searchLoadingEnable && searchResult.username=='' && searchItem.value">
+                    <mat-card-header>
+                        <mat-card-title>Loading...</mat-card-title>
+                    </mat-card-header>
+                </mat-card>
+
+                <mat-card class="col-12" *ngIf="!searchResult.username && searchItem.value && searchLoadingEnable==false">
+                    <mat-card-header>
+                        <mat-card-title>No users found</mat-card-title>
+                    </mat-card-header>
+                </mat-card>
+
             </mat-drawer>
             <mat-drawer-content>
-                <mat-form-field>
-                    <mat-label>Sidenav mode</mat-label>
-                    <mat-select #mode value="side">
-                        <mat-option value="side">Side</mat-option>
-                        <mat-option value="over">Over</mat-option>
-                        <mat-option value="push">Push</mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field>
-                    <mat-label>Has backdrop</mat-label>
-                    <mat-select #hasBackdrop>
-                        <mat-option>Unset</mat-option>
-                        <mat-option [value]="true">True</mat-option>
-                        <mat-option [value]="false">False</mat-option>
-                    </mat-select>
-                </mat-form-field>
+                Here
             </mat-drawer-content>
         </mat-drawer-container>
     </div>
