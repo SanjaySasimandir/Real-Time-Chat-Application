@@ -38,13 +38,20 @@ export class UserauthService {
     return this.http.post<any>('http://localhost:3000/users/searchuser', { "username": username });
   }
 
+  addContactToBoth(contact: string) {
+    return this.http.post<any>('http://localhost:3000/users/addContactToBoth', { "firstUsername": "nfsboy", "secondUsername": contact });
+  }
+
+
+
   loginStatus() {
     if (localStorage.getItem('id') && localStorage.getItem('token')) {
       return true;
     }
-    else if ((!!!localStorage.getItem('id') && !!localStorage.getItem('token')) || (!!localStorage.getItem('id') && !!!localStorage.getItem('token'))) {
+    else if (!(!!localStorage.getItem('id') && !!localStorage.getItem('token') && !!localStorage.getItem('username'))) {
       localStorage.removeItem('token');
       localStorage.removeItem('id');
+      localStorage.removeItem('username');
       return false;
     }
     else {

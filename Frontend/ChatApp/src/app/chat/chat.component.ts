@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserModel } from '../models/user.model';
 import { UserauthService } from '../services/userauth.service';
 
 @Component({
@@ -40,6 +39,14 @@ export class ChatComponent implements OnInit {
       }
       this.searchLoadingEnable = false;
     });
+  }
+
+  reroute(username: string) {
+    this.router.navigate(['/chat/' + username]);
+  }
+
+  consolefunction(){
+    console.log('here from parent')
   }
 
   test() {

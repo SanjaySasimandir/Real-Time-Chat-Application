@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit {
         this.loginError = true;
         localStorage.setItem('token', 'true');
         localStorage.setItem('id', status.id);
+        localStorage.setItem('username', status.username);
         this.router.navigate(['/chat']);
       }
       else {

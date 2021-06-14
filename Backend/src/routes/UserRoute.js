@@ -4,22 +4,6 @@ const userRouter = express.Router();
 const UserData = require('../models/UserData.js');
 var EmailVerifyData = require('../models/EmailVerifyData');
 
-userRouter.get('/test', (req, res) => {
-    var userDetails = {
-        firstName: "firstName",
-        lastName: "lastName",
-        email: "email",
-        bio: "bio",
-        availability: "availability",
-        phone: "5626252",
-        picture: "picture",
-        profileSettings: [1, 2, 3, 4]
-    };
-    var user = UserData(userDetails);
-    user.save();
-    res.send("user router working");
-});
-
 userRouter.post('/signup', (req, res) => {
     var userDetails = req.body.user;
     delete userDetails["_id"];
@@ -37,7 +21,7 @@ userRouter.post('/login', (req, res) => {
         if (data[0]) {
             data[0].availability = "online";
             data[0].save()
-            res.send({ "message": "success", "id": data[0]._id });
+            res.send({ "message": "success", "id": data[0]._id, "username": data[0].username });
         }
         else {
             res.send({ "message": "failure" });
@@ -100,6 +84,31 @@ userRouter.post('/searchuser', (req, res) => {
         }
         else {
             res.send({ "message": "notfound" });
+        }
+    })
+});
+
+userRouter.post('/addContactToBoth', (req, res) => {
+    var firstUsername = req.body.firstUsername;
+    var secondUsername = req.body.secondUsername;
+    UserData.find({ username: { $in: [firstUsername, secondUsername] } }).then(data => {
+        if (data[0] && data[1]) {
+            if (data[0].contacts.includes(secondUsername)) {
+                delete data[0].contacts[data[0].contacts.indexOf(secondUsername)];
+            }
+            data[0].contacts.push(secondUsername);
+            data[0].save();
+
+            if (data[1].contacts.includes(firstUsername)) {
+                delete data[1].contacts[data[1].contacts.indexOf(firstUsername)];
+            }
+            data[1].contacts.push(firstUsername);
+            data[1].save();
+
+            res.send({ "message": "success" });
+        }
+        else {
+            res.send({ "message": "failure" });
         }
     })
 });
