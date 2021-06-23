@@ -1,14 +1,48 @@
-<mat-card class="col-12 d-flex align-items-center">
-    <mat-card-header class="flex-grow-1">
-        <div mat-card-avatar class="card-avatar"
-            style="background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg')">
+<div class="chat-container">
+    <mat-card class="col-12 d-flex align-items-center top-bar-card">
+
+
+        <div class="flex-grow-1 row align-items-center">
+            <div mat-card-avatar class="col-2 card-avatar"
+                style="background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg')">
+            </div>
+            <div class="col-9">
+                <mat-card-title>{{contact.firstName}} {{contact.lastName}}</mat-card-title>
+                <mat-card-subtitle>{{contact.username}}</mat-card-subtitle>
+            </div>
         </div>
-        <mat-card-title>Name line is here</mat-card-title>
-        <mat-card-subtitle>@usernameishere</mat-card-subtitle>
-    </mat-card-header>
-    <button mat-raised-button color="primary" (click)="parentTest()">Add Contact</button>
-</mat-card>
-<div class="container-fluid">
-    <div class="chat">
+
+        <div class="dropdown col-1 d-flex justify-content-end">
+            <button mat-icon-button class="dropdown-toggle" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <ul mat-card class="dropdown-menu overflow-hidden" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item contact-options" (click)="muteContact()">{{muted ? "Unmute" : "Mute"}}</a></li>
+                <li><a class="dropdown-item contact-options" (click)="blockContact()">{{blocked? "Unblock" : "Block"}}</a></li>
+            </ul>
+        </div>
+
+    </mat-card>
+    <!-- <div class="message-box">message-box</div> -->
+    <div class="message-box d-flex" #messageScroll [scrollTop]="messageScroll.scrollHeight">
+        <div class="card">
+            here
+        </div>
     </div>
+    <mat-card class="d-flex justify-content-center bottom-input-card align-items-center">
+        <mat-form-field appearance="fill" class="w-100 message-input">
+            <textarea matInput [formControl]="newMessage" placeholder="Enter a message" rows="{{inputBoxSize}}"
+                (input)="inputBoxResize()"></textarea>
+        </mat-form-field>
+        <!-- <mat-form-field appearance="fill" class="w-100 message-input">
+            <textarea matInput [formControl]="newMessage" #inputScroll placeholder="Enter a message" rows="{{inputBoxSize}}" (click)="consoleThis(inputScroll)" (input)="inputBoxResize1(inputScroll.scrollHeight)"></textarea>
+        </mat-form-field> -->
+        <!-- <mat-form-field appearance="fill" class="w-100 message-input">
+            <textarea matInput [formControl]="newMessage" #inputScroll  (click)="consoleThis(inputScroll.scrollHeight)" placeholder="Enter a message"></textarea>
+        </mat-form-field> -->
+        <button mat-fab matSuffix color="primary">
+            <mat-icon>send</mat-icon>
+        </button>
+    </mat-card>
 </div>

@@ -42,6 +42,31 @@ export class UserauthService {
     return this.http.post<any>('http://localhost:3000/users/addContactToBoth', { "firstUsername": "nfsboy", "secondUsername": contact });
   }
 
+  getContacts() {
+    let id = localStorage.getItem('id');
+    return this.http.post<any>('http://localhost:3000/users/getContacts', { "id": id });
+  }
+
+  getOnlineContacts() {
+    let id = localStorage.getItem('id');
+    return this.http.post<any>('http://localhost:3000/users/getOnlineContacts', { "id": id });
+  }
+
+  muteBlockStatus(contactUsername: string) {
+    let id = localStorage.getItem('id');
+    return this.http.post<any>('http://localhost:3000/users/MuteBlockStatus', { "id": id, "contactUsername": contactUsername });
+  }
+
+  toggleBlock(contactUsername: string) {
+    let id = localStorage.getItem('id');
+    return this.http.post<any>('http://localhost:3000/users/toggleBlock', { "id": id, "contactUsername": contactUsername });
+  }
+
+  toggleMute(contactUsername: string) {
+    let id = localStorage.getItem('id');
+    return this.http.post<any>('http://localhost:3000/users/toggleMute', { "id": id, "contactUsername": contactUsername });
+  }
+
 
 
   loginStatus() {

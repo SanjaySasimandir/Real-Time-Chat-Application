@@ -1,4 +1,4 @@
-<div class="h-100 w-100 d-flex flex-column ">
+<div class="h-100 w-100 d-flex flex-column">
     <app-header class="mb-auto"></app-header>
     <div class="container-fluid">
         <div class="row justify-content-center align-items-center login-outer-wrapper">
@@ -48,7 +48,7 @@
                         <input matInput (input)="loginError=false" [type]="hidePassword ? 'password' : 'text'"
                             [formControl]="password" placeholder="Enter your password" maxlength="20" required>
                         <button mat-icon-button matSuffix *ngIf="this.password.value!=''"
-                            (click)="this.password.setValue('')">
+                            (click)="this.password.setValue('')" type="button">
                             <mat-icon>close</mat-icon>
                         </button>
                         <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword">

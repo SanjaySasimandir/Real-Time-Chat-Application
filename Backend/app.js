@@ -34,6 +34,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http, {
     cors: {
         origin: '*',
+        methods: "*"
     }
 });
 
@@ -44,6 +45,8 @@ app.use(cors());
 
 const bodyparser = require('body-parser');
 app.use(bodyparser.json());
+
+app.use(express.json())
 
 const UserRoute = require('./src/routes/UserRoute');
 app.use('/users', UserRoute);

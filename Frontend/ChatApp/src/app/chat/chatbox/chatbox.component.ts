@@ -1,5 +1,7 @@
-import { AfterViewInit, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ContactModel } from 'src/app/models/contact.model';
 import { UserauthService } from 'src/app/services/userauth.service';
 
 @Component({
@@ -10,37 +12,77 @@ import { UserauthService } from 'src/app/services/userauth.service';
 
 export class ChatboxComponent implements OnInit {
 
-  @Output() contactrefresh = new EventEmitter();
+  @Input() contact = new ContactModel('', '', '', '');
 
-  parentTest() {
-    this.contactrefresh.emit();
-  }
+  @Output() contactsrefresh = new EventEmitter();
 
   constructor(private activatedRouter: ActivatedRoute, private userAuth: UserauthService) { }
 
-  username = "";
-  contact = {
-    username: '',
-    firstName: '',
-    lastName: '',
-    picture: ''
+
+  newMessage = new FormControl('');
+
+  inputBoxSize = 1;
+  inputBoxResize() {
+    let lineCount = this.newMessage.value.split('\n').length;
+    if (lineCount <= 5) {
+      this.inputBoxSize = lineCount;
+    }
+    console.log(lineCount)
+  }
+
+  scrollHeightArray = [53];
+  inputBoxResize1(scrollHeight: any) {
+    // console.log(scrollHeight)
+    if (!this.scrollHeightArray.includes(scrollHeight)) {
+      console.log('added', scrollHeight, this.scrollHeightArray)
+      this.scrollHeightArray.push(scrollHeight);
+    }
+    this.inputBoxSize = this.scrollHeightArray.length;
+
+  }
+
+  muted = false;
+  blocked = false;
+
+  getMuteBlockStatus() {
+    this.userAuth.muteBlockStatus(this.contact.username).subscribe(status => {
+      if (status.message == "success") {
+        this.muted = status.muteStatus;
+        this.blocked = status.blockStatus;
+      }
+    });
+  }
+
+  muteContact() {
+    this.userAuth.toggleMute(this.contact.username).subscribe(status => {
+      if (status.message == "success") {
+        this.muted = status.muteStatus;
+        this.contactsrefresh.emit();
+      }
+    });
+  }
+
+  blockContact() {
+    this.userAuth.toggleBlock(this.contact.username).subscribe(status => {
+      if (status.message == "success") {
+        this.blocked = status.blockStatus;
+        this.contactsrefresh.emit();
+      }
+    });
   }
 
   ngOnInit(): void {
-    this.activatedRouter.params.subscribe(params => {
-      this.username = params.username;
-      this.userAuth.userSearch(this.username).subscribe(response => {
-        if (response.message == "found") {
-          this.contact = response.user;
-        }
-      });
-    });
+    this.getMuteBlockStatus();
   }
 
-  test() {
-    this.userAuth.addContactToBoth(this.contact.username).subscribe(data => {
-      console.log(data);
-    });
+  consoleThis($data: any) {
+    console.log($data);
   }
+
+  // test() {
+  //   this.userAuth.addContactToBoth(this.contact.username).subscribe(data => {
+  //     console.log(data);
+  //   });
+  // }
 
 }

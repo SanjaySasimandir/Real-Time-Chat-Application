@@ -48,6 +48,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 import { ChatComponent } from './chat/chat.component';
 import { ChatboxComponent } from './chat/chatbox/chatbox.component';
+import { SelectChatComponent } from './chat/select-chat/select-chat.component';
 
 const materialModules = [
   CdkTreeModule,
@@ -95,7 +96,8 @@ const materialModules = [
     RegisterComponent,
     LoginComponent,
     ChatComponent,
-    ChatboxComponent
+    ChatboxComponent,
+    SelectChatComponent,
   ],
   imports: [
     BrowserModule,

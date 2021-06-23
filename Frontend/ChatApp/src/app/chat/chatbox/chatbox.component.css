@@ -1,9 +1,56 @@
 .card-avatar {
     background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
     background-size: cover;
+    margin-left: 0.75rem;
 }
 
 mat-card-subtitle {
     padding-bottom: 0;
     margin-bottom: 0;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.chat-container {
+    display: flex;
+    height: calc(100vh - 76px);
+    flex-flow: column;
+}
+
+.message-box {
+    flex: 1 !important;
+    height: auto !important;
+    /* height:  !important; */
+    overflow: auto !important;
+    margin: 0.5rem 0.5rem 0.5rem 0.5rem !important;
+    /* width: 100%; */
+    /* width: calc(100% + 1.75rem); */
+    /* margin-right: -2.75rem !important; */
+}
+
+.top-bar-card {
+    margin-left: -1.75rem;
+    margin-right: -1.75rem;
+    width: calc(100% + 1.75rem);
+}
+
+.bottom-input-card {
+    margin-left: -1.75rem;
+    margin-right: -1.75rem;
+    width: calc(100% + 1.75rem);
+}
+
+textarea {
+    resize: none !important;
+}
+
+.message-input {
+    margin-bottom: -1rem !important;
+    margin-right: 1rem;
+}
+
+.contact-options {
+    cursor: pointer;
 }

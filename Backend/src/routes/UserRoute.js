@@ -71,15 +71,8 @@ userRouter.post('/dupeEmailCheck', (req, res) => {
 
 userRouter.post('/searchuser', (req, res) => {
     var username = req.body.username;
-    UserData.find({ username: username }).then(data => {
+    UserData.find({ username: username }, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(data => {
         if (data[0]) {
-            dataToSend = {
-                username: data[0].username,
-                firstName: data[0].firstName,
-                lastName: data[0].lastName,
-                picture: data[0].picture
-
-            }
             res.send({ "message": "found", "user": data[0] });
         }
         else {
@@ -110,7 +103,109 @@ userRouter.post('/addContactToBoth', (req, res) => {
         else {
             res.send({ "message": "failure" });
         }
-    })
+    });
+});
+
+userRouter.post('/getContacts', (req, res) => {
+    var id = req.body.id;
+    UserData.find({ _id: id }, { contacts: 1, mutedContacts: 1, blockedContacts: 1, _id: 0 }).then(data => {
+        if (data[0].contacts) {
+            UserData.find({ username: { $in: data[0].contacts } }, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(users => {
+                res.send({ "message": "success", "contacts": users, "mutedContacts": data[0].mutedContacts, "blockedContacts": data[0].blockedContacts });
+            });
+        }
+        else {
+            res.send({ "message": "failure" });
+        }
+    });
+});
+
+userRouter.post('/getOnlineContacts', (req, res) => {
+    var id = req.body.id;
+    UserData.find({ _id: id }, { contacts: 1, mutedContacts: 1, blockedContacts: 1, _id: 0 }).then(data => {
+        if (data[0].contacts) {
+            UserData.find({ username: { $in: data[0].contacts }, availability: "online" }, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(users => {
+                res.send({ "message": "success", "contacts": users, "mutedContacts": data[0].mutedContacts, "blockedContacts": data[0].blockedContacts });
+            });
+        }
+        else {
+            res.send({ "message": "failure" });
+        }
+    });
+});
+
+userRouter.post('/MuteBlockStatus', (req, res) => {
+    var id = req.body.id;
+    var contactUsername = req.body.contactUsername;
+    let muteStatus = false;
+    let blockStatus = false;
+    UserData.find({ _id: id }, { mutedContacts: 1, blockedContacts: 1, _id: 0 }).then(data => {
+        if (data[0]) {
+
+            blockStatus = data[0].blockedContacts.includes(contactUsername);
+            muteStatus = data[0].mutedContacts.includes(contactUsername);
+
+            res.send({ "message": "success", "blockStatus": blockStatus, "muteStatus": muteStatus });
+        }
+        else {
+            res.send({ "message": "failure" });
+        }
+    });
+});
+
+userRouter.post('/toggleBlock', (req, res) => {
+    var id = req.body.id;
+    var contactUsername = req.body.contactUsername;
+    let blockStatus;
+    UserData.find({ _id: id }, { blockedContacts: 1 }).then(data => {
+        if (data[0]) {
+            if (data[0].blockedContacts.includes(contactUsername)) {
+                blockStatus = false;
+                delete data[0].blockedContacts[data[0].blockedContacts.indexOf(contactUsername)];
+            }
+            else {
+                data[0].blockedContacts.push(contactUsername);
+                blockStatus = true;
+            }
+            UserData.findByIdAndUpdate({ _id: id }, data[0], (err) => {
+                if (err) console.log(err);
+                else {
+                    res.send({ "message": "success", "blockStatus": blockStatus });
+                }
+
+            });
+        }
+        else {
+            res.send({ "message": "failure" });
+        }
+    });
+});
+
+userRouter.post('/toggleMute', (req, res) => {
+    var id = req.body.id;
+    var contactUsername = req.body.contactUsername;
+    let muteStatus = false;
+    UserData.find({ _id: id }, { mutedContacts: 1 }).then(data => {
+        if (data[0]) {
+            if (data[0].mutedContacts.includes(contactUsername)) {
+                delete data[0].mutedContacts[data[0].mutedContacts.indexOf(contactUsername)];
+            }
+            else {
+                data[0].mutedContacts.push(contactUsername);
+                muteStatus = true;
+            }
+            UserData.findByIdAndUpdate({ _id: id }, data[0], (err) => {
+                if (err) console.log(err);
+                else {
+                    res.send({ "message": "success", "muteStatus": muteStatus });
+                }
+
+            });
+        }
+        else {
+            res.send({ "message": "failure" });
+        }
+    });
 });
 
 userRouter.get('/redousers', (req, res) => {

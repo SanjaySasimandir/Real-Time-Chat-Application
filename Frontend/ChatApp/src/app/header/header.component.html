@@ -7,9 +7,9 @@
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link" aria-current="page" href="#">Home</a>
-                <a class="nav-link" *ngIf="!userAuth.loginStatus()" routerLink="login">Login</a>
-                <a class="nav-link" *ngIf="!userAuth.loginStatus()" routerLink="signup">Register</a>
+                <a class="nav-link" aria-current="page" href="/">Home</a>
+                <a class="nav-link" *ngIf="!userAuth.loginStatus()" routerLink="/login">Login</a>
+                <a class="nav-link" *ngIf="!userAuth.loginStatus()" routerLink="/signup">Register</a>
                 <a class="nav-link logoutButton" *ngIf="userAuth.loginStatus()" (click)="logout()">Logout</a>
             </div>
         </div>

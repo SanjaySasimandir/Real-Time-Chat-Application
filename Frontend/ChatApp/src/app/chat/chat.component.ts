@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ContactModel } from '../models/contact.model';
 import { UserauthService } from '../services/userauth.service';
 
 @Component({
@@ -22,12 +23,7 @@ export class ChatComponent implements OnInit {
   }
 
   searchItem = new FormControl('');
-  searchResult = {
-    username: '',
-    firstName: '',
-    lastName: '',
-    picture: ''
-  }
+  searchResult = new ContactModel('', '', '', '');
   searchLoadingEnable = false;
   searchUser() {
     this.searchLoadingEnable = true;
@@ -41,11 +37,44 @@ export class ChatComponent implements OnInit {
     });
   }
 
+  contacts: ContactModel[] = [];
+  noContacts = false;
+  mutedContacts: string[] = [];
+  blockedContacts: string[] = [];
+  loadContacts() {
+    this.userAuth.getContacts().subscribe(data => {
+      if (data.message == "success") {
+        this.contacts = data.contacts;
+        this.mutedContacts = data.mutedContacts;
+        this.blockedContacts = data.blockedContacts;
+        this.noContacts = false;
+      }
+      else {
+        this.noContacts = true;
+      }
+      console.log(this.contacts)
+    });
+  }
+
+  onlineContacts: ContactModel[] = [];
+  loadOnlineContacts() {
+    this.userAuth.getOnlineContacts().subscribe(data => {
+      if (data.message == "success") {
+        this.onlineContacts = data.contacts;
+      }
+    });
+  }
+
+  selectedContact = new ContactModel('', '', '', '');
+  selectContact(contact: ContactModel) {
+    this.selectedContact = contact;
+  }
+
   reroute(username: string) {
     this.router.navigate(['/chat/' + username]);
   }
 
-  consolefunction(){
+  consolefunction() {
     console.log('here from parent')
   }
 
@@ -54,6 +83,8 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadContacts();
+    this.loadOnlineContacts();
   }
 
 }
