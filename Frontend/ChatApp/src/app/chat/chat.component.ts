@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ContactModel } from '../models/contact.model';
+import { WebSocketService } from '../services/socket/web-socket.service';
 import { UserauthService } from '../services/userauth.service';
+import { ChatboxComponent } from './chatbox/chatbox.component';
 
 @Component({
   selector: 'app-chat',
@@ -10,8 +12,9 @@ import { UserauthService } from '../services/userauth.service';
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
+  @ViewChild(ChatboxComponent) child!: ChatboxComponent;
 
-  constructor(private router: Router, public userAuth: UserauthService) { }
+  constructor(private router: Router, public userAuth: UserauthService, private webSocket: WebSocketService) { }
 
   logout() {
     this.userAuth.logOutUser().subscribe(status => {
@@ -36,13 +39,30 @@ export class ChatComponent implements OnInit {
       this.searchLoadingEnable = false;
     });
   }
+  selectContactFromSearch(searchContact: ContactModel) {
+    console.log(this.contacts.filter(contact => contact.username === searchContact.username));
+    this.selectedContact = this.contacts.filter(contact => contact.username === searchContact.username)[0];
+    this.child.ngOnInit();
+  }
 
   contacts: ContactModel[] = [];
   noContacts = false;
   mutedContacts: string[] = [];
   blockedContacts: string[] = [];
   loadContacts() {
-    this.userAuth.getContacts().subscribe(data => {
+    // this.userAuth.getContacts().subscribe(data => {
+    //   if (data.message == "success") {
+    //     this.contacts = data.contacts.reverse();
+    //     this.mutedContacts = data.mutedContacts;
+    //     this.blockedContacts = data.blockedContacts;
+    //     this.noContacts = false;
+    //   }
+    //   else {
+    //     this.noContacts = true;
+    //   }
+    // });
+    this.webSocket.emit('send contacts request', (localStorage.getItem('username')));
+    this.webSocket.listen('receive contacts').subscribe((data: any) => {
       if (data.message == "success") {
         this.contacts = data.contacts;
         this.mutedContacts = data.mutedContacts;
@@ -52,8 +72,7 @@ export class ChatComponent implements OnInit {
       else {
         this.noContacts = true;
       }
-      console.log(this.contacts)
-    });
+    })
   }
 
   onlineContacts: ContactModel[] = [];
@@ -68,10 +87,21 @@ export class ChatComponent implements OnInit {
   selectedContact = new ContactModel('', '', '', '');
   selectContact(contact: ContactModel) {
     this.selectedContact = contact;
+    setTimeout(() => {
+      this.refreshchild(this.selectedContact);
+    }, 100);
   }
 
-  reroute(username: string) {
-    this.router.navigate(['/chat/' + username]);
+  refreshchild(contact: any) {
+    this.child.ngOnInit()
+  }
+
+  addNewContact(contact: ContactModel) {
+    this.userAuth.addContactToBoth(contact.username).subscribe(status => {
+      if (status.message == "success") {
+        this.loadContacts();
+      }
+    });
   }
 
   consolefunction() {
@@ -82,9 +112,14 @@ export class ChatComponent implements OnInit {
     console.log(this.searchItem.value);
   }
 
+  checkSearchResInContacts(name: string) {
+    return !!this.contacts.filter(contact => contact.username == name).length
+  }
+
   ngOnInit(): void {
     this.loadContacts();
     this.loadOnlineContacts();
+
   }
 
 }

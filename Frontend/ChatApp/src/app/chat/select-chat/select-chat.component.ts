@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserauthService } from 'src/app/services/userauth.service';
 
 @Component({
   selector: 'app-select-chat',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SelectChatComponent implements OnInit {
 
-  constructor() { }
+  constructor(private userAuth: UserauthService) { }
 
+  imageURL: string = "";
   ngOnInit(): void {
+    this.imageURL = this.userAuth.localhostAddress() + '/images/start.png' + this.imageURL;
   }
 
 }

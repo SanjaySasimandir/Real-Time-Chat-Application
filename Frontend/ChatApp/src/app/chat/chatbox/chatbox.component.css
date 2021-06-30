@@ -48,9 +48,27 @@ textarea {
 
 .message-input {
     margin-bottom: -1rem !important;
-    margin-right: 1rem;
+    margin-right: 0.75rem;
+    margin-left: 0.75rem;
+}
+
+.file-input {
+    margin-right: 0.75rem;
+    margin-left: 0.75rem;
 }
 
 .contact-options {
     cursor: pointer;
+}
+
+.message-wrapper {
+    margin: 0.75rem;
+    padding: 0.75rem;
+    background-color: #cbd3e4;
+    border-radius: 7.5px;
+}
+
+.message-wrapper-user {
+    background-color: #3f51b5;
+    color: #fafafa;
 }

@@ -10,6 +10,10 @@ export class UserauthService {
 
   constructor(private http: HttpClient) { }
 
+  localhostAddress() {
+    return 'http://localhost:3000/';
+  }
+
   initiateMailVerification(email: string) {
     return this.http.post<any>('http://localhost:3000/email/initiateMailVerification', { "email": email });
   }
@@ -39,7 +43,7 @@ export class UserauthService {
   }
 
   addContactToBoth(contact: string) {
-    return this.http.post<any>('http://localhost:3000/users/addContactToBoth', { "firstUsername": "nfsboy", "secondUsername": contact });
+    return this.http.post<any>('http://localhost:3000/users/addContactToBoth', { "firstUsername": localStorage.getItem('username'), "secondUsername": contact });
   }
 
   getContacts() {

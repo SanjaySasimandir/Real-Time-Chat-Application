@@ -1,8 +1,9 @@
 const express = require('express');
 const userRouter = express.Router();
 
-const UserData = require('../models/UserData.js');
+const UserData = require('../models/UserData');
 var EmailVerifyData = require('../models/EmailVerifyData');
+var ChatData = require('../models/ChatData');
 
 userRouter.post('/signup', (req, res) => {
     var userDetails = req.body.user;
@@ -86,17 +87,25 @@ userRouter.post('/addContactToBoth', (req, res) => {
     var secondUsername = req.body.secondUsername;
     UserData.find({ username: { $in: [firstUsername, secondUsername] } }).then(data => {
         if (data[0] && data[1]) {
-            if (data[0].contacts.includes(secondUsername)) {
-                delete data[0].contacts[data[0].contacts.indexOf(secondUsername)];
-            }
+            // if (data[0].contacts.includes(secondUsername)) {
+            //     delete data[0].contacts[data[0].contacts.indexOf(secondUsername)];
+            // }
+
             data[0].contacts.push(secondUsername);
             data[0].save();
 
-            if (data[1].contacts.includes(firstUsername)) {
-                delete data[1].contacts[data[1].contacts.indexOf(firstUsername)];
-            }
+            // if (data[1].contacts.includes(firstUsername)) {
+            //     delete data[1].contacts[data[1].contacts.indexOf(firstUsername)];
+            // }
             data[1].contacts.push(firstUsername);
             data[1].save();
+
+            var newChat = new ChatData();
+            newChat.firstUser = firstUsername;
+            newChat.secondUser = secondUsername;
+            newChat.chat = [];
+            newChat.save()
+
 
             res.send({ "message": "success" });
         }
@@ -106,19 +115,19 @@ userRouter.post('/addContactToBoth', (req, res) => {
     });
 });
 
-userRouter.post('/getContacts', (req, res) => {
-    var id = req.body.id;
-    UserData.find({ _id: id }, { contacts: 1, mutedContacts: 1, blockedContacts: 1, _id: 0 }).then(data => {
-        if (data[0].contacts) {
-            UserData.find({ username: { $in: data[0].contacts } }, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(users => {
-                res.send({ "message": "success", "contacts": users, "mutedContacts": data[0].mutedContacts, "blockedContacts": data[0].blockedContacts });
-            });
-        }
-        else {
-            res.send({ "message": "failure" });
-        }
-    });
-});
+// userRouter.post('/getContacts', (req, res) => {
+//     var id = req.body.id;
+//     UserData.find({ _id: id }, { contacts: 1, mutedContacts: 1, blockedContacts: 1, _id: 0 }).then(data => {
+//         if (data[0].contacts) {
+//             UserData.find({ username: { $in: data[0].contacts } }, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(users => {
+//                 res.send({ "message": "success", "contacts": users, "mutedContacts": data[0].mutedContacts, "blockedContacts": data[0].blockedContacts });
+//             });
+//         }
+//         else {
+//             res.send({ "message": "failure" });
+//         }
+//     });
+// });
 
 userRouter.post('/getOnlineContacts', (req, res) => {
     var id = req.body.id;
@@ -212,6 +221,7 @@ userRouter.get('/redousers', (req, res) => {
     UserData.find().then(data => {
         console.log(data[0]);
         for (let i = 0; i < data.length; i++) {
+            data[i].contacts=[]
             data[i].save()
         }
         res.send('here');

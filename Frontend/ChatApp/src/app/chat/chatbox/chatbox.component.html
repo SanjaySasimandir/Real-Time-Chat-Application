@@ -17,21 +17,60 @@
                 data-bs-toggle="dropdown" aria-expanded="false">
                 <mat-icon>more_vert</mat-icon>
             </button>
-            <ul mat-card class="dropdown-menu overflow-hidden" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item contact-options" (click)="muteContact()">{{muted ? "Unmute" : "Mute"}}</a></li>
-                <li><a class="dropdown-item contact-options" (click)="blockContact()">{{blocked? "Unblock" : "Block"}}</a></li>
+            <ul mat-card class="dropdown-menu overflow-hidden"  aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item contact-options" (click)="muteContact()">{{muted ? "Unmute" : "Mute"}}</a>
+                </li>
+                <li><a class="dropdown-item contact-options" (click)="blockContact()">{{blocked? "Unblock" :
+                        "Block"}}</a></li>
             </ul>
         </div>
 
     </mat-card>
     <!-- <div class="message-box">message-box</div> -->
-    <div class="message-box d-flex" #messageScroll [scrollTop]="messageScroll.scrollHeight">
-        <div class="card">
-            here
+    <div class="message-box d-flex flex-column" #messageScroll [scrollTop]="messageScroll.scrollHeight">
+        here
+        <div class="col-12" *ngFor="let message of messagesInChat.chat">
+            <div class="justify-content-start" *ngIf="message.messageSender==contact.username">
+                <div class="col-5 me-auto text-break message-wrapper" *ngIf="message.messageType=='text'">
+                    {{message.messageContent}}
+                </div>
+                <div class="col-5 me-auto message-wrapper" *ngIf="message.messageType.split('/')[0]=='image'">
+                    <img class="img-responsive w-100"
+                        src="data:{{message.messageType}};base64,{{message.messageContent}}"
+                        alt="Image From {{contact.username}}">
+                </div>
+            </div>
+            <div class="justify-content-end" *ngIf="message.messageSender!=contact.username">
+                <div class="col-5 ms-auto text-break message-wrapper message-wrapper-user" *ngIf="
+                    message.messageType=='text'">
+                    {{message.messageContent}}
+                </div>
+                <div class="col-5 ms-auto message-wrapper message-wrapper-user"
+                    *ngIf="message.messageType.split('/')[0]=='image'">
+                    <img class="img-responsive w-100"
+                        src="data:{{message.messageType}};base64,{{message.messageContent}}" alt="Image From You">
+                </div>
+
+            </div>
         </div>
+
     </div>
     <mat-card class="d-flex justify-content-center bottom-input-card align-items-center">
-        <mat-form-field appearance="fill" class="w-100 message-input">
+
+        <button mat-fab matSuffix color="primary" type="button" (click)="uploadToggle=!uploadToggle">
+            <mat-icon *ngIf="!uploadToggle"> insert_photo </mat-icon>
+            <mat-icon *ngIf="uploadToggle"> close </mat-icon>
+        </button>
+
+        <input class="form-control w-100 file-input" *ngIf="uploadToggle" (change)="imageSelected($event)" type="file"
+            placeholder="Enter a message">
+
+        <button mat-fab matSuffix color="primary" *ngIf="uploadToggle" (click)="sendImageSelected()"
+            [disabled]="!this.selectedImage">
+            <mat-icon>send</mat-icon>
+        </button>
+
+        <mat-form-field appearance="fill" class="w-100 message-input" *ngIf="!uploadToggle">
             <textarea matInput [formControl]="newMessage" placeholder="Enter a message" rows="{{inputBoxSize}}"
                 (input)="inputBoxResize()"></textarea>
         </mat-form-field>
@@ -41,7 +80,8 @@
         <!-- <mat-form-field appearance="fill" class="w-100 message-input">
             <textarea matInput [formControl]="newMessage" #inputScroll  (click)="consoleThis(inputScroll.scrollHeight)" placeholder="Enter a message"></textarea>
         </mat-form-field> -->
-        <button mat-fab matSuffix color="primary">
+        <button mat-fab matSuffix color="primary" *ngIf="!uploadToggle" (click)="sendMessage()"
+            [disabled]="!this.newMessage.value">
             <mat-icon>send</mat-icon>
         </button>
     </mat-card>

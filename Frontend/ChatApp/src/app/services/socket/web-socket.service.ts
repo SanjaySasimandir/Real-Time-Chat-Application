@@ -10,7 +10,7 @@ export class WebSocketService {
   socket: any;
 
   constructor() {
-    this.socket = io('ws://localhost:3000', {})
+    this.socket = io('ws://localhost:3000?username=' + localStorage.getItem('username'), { transports: ['websocket', 'polling', 'flashsocket'] })
   }
 
 

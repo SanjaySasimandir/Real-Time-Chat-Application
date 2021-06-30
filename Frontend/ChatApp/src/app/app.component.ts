@@ -18,10 +18,12 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.webSocket.emit('id', Date.now());
+    this.webSocket.emit('id', localStorage.getItem('username'));
 
     this.webSocket.listen('test event').subscribe((data: any) => {
       console.log(data);
     });
+
+
   }
 }
