@@ -2,6 +2,10 @@
     background: #3f51b5 !important;
 }
 
+.logoutButton {
+    cursor: pointer;
+}
+
 .outside-container {
     height: 100vh !important;
     margin: 0 !important;

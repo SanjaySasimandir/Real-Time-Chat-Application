@@ -51,7 +51,7 @@
                             (click)="this.password.setValue('')" type="button">
                             <mat-icon>close</mat-icon>
                         </button>
-                        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+                        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
                             <mat-icon *ngIf="hidePassword">visibility_off</mat-icon>
                             <mat-icon *ngIf="!hidePassword">visibility</mat-icon>
                         </button>

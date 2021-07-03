@@ -35,3 +35,7 @@ mat-chip:hover {
 .terms-conditions{
     text-decoration: none;
 }
+
+.form-control{
+    margin-bottom: calc(1.34375em + 0.25em);
+}

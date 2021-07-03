@@ -22,3 +22,11 @@ body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+.modal-backdrop {
+    z-index: 0 !important;
+}
+
+.modal-content{
+    z-index: 0 !important;
+}

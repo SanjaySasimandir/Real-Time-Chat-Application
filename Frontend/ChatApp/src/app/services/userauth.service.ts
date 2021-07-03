@@ -74,7 +74,7 @@ export class UserauthService {
 
 
   loginStatus() {
-    if (localStorage.getItem('id') && localStorage.getItem('token')) {
+    if (localStorage.getItem('id') && localStorage.getItem('token') && localStorage.getItem('username')) {
       return true;
     }
     else if (!(!!localStorage.getItem('id') && !!localStorage.getItem('token') && !!localStorage.getItem('username'))) {
@@ -89,11 +89,9 @@ export class UserauthService {
   };
 
   logOutUser() {
-    let token = localStorage.getItem('token');
-    let id = localStorage.getItem('id');
     localStorage.removeItem('token');
     localStorage.removeItem('id');
-    return this.http.post<any>('http://localhost:3000/users/logout', { "id": id });
+    localStorage.removeItem('username');
   }
 
 }

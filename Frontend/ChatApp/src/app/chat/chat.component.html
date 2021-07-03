@@ -1,11 +1,10 @@
 <div class="container-fluid outside-container">
     <nav class="navbar navbar-expand-md navbar-dark bg-light">
         <div class="container-fluid">
-            <button mat-fab color="primary" (click)="drawer.toggle()">
-                <!-- <mat-icon> format_list_bulleted</mat-icon> -->
-                <!-- <mat-icon>vertical_split</mat-icon> -->
+            <!-- <button mat-fab color="primary" (click)="drawer.toggle()">
                 <mat-icon>chrome_reader_mode</mat-icon>
-            </button>
+            </button> -->
+            <a class="navbar-brand" href="#">ChatApp</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -26,7 +25,6 @@
                         <ng-template matTabContent>
 
 
-
                             <form (ngSubmit)="searchUser()">
                                 <mat-form-field class="col-12" appearance="fill">
                                     <mat-label>Search users</mat-label>
@@ -44,19 +42,6 @@
                             </form>
 
 
-                            <!-- <mat-card class="col-12 user-card" (click)="reroute(searchResult.username)"
-                                *ngIf="searchResult.username">
-                                <mat-card-header>
-                                    <div mat-card-avatar class="card-avatar"
-                                        style="background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg')">
-                                    </div>
-                                    <mat-card-title class="text-truncate">{{searchResult.firstName}}
-                                        {{searchResult.lastName}}
-                                    </mat-card-title>
-                                    <mat-card-subtitle class="text-truncate">@{{searchResult.username}}
-                                    </mat-card-subtitle>
-                                </mat-card-header>
-                            </mat-card> -->
                             <div class="hover-background-change"
                                 *ngIf="searchResult.username && checkSearchResInContacts(searchResult.username)"
                                 (click)="selectContactFromSearch(searchResult);this.searchItem.setValue('');searchResult.username='';">
@@ -81,7 +66,8 @@
                                 </mat-card>
                             </div>
 
-                            <div class="hover-background-change" *ngIf="searchResult.username && !checkSearchResInContacts(searchResult.username)"
+                            <div class="hover-background-change"
+                                *ngIf="searchResult.username && !checkSearchResInContacts(searchResult.username)"
                                 (click)="addNewContact(searchResult);searchItem.setValue('');searchResult.username='';">
                                 <mat-card class="col-12 d-flex align-items-center user-card">
                                     <div class="flex-grow-1 row align-items-center">
@@ -122,11 +108,10 @@
                             <mat-divider></mat-divider>
 
 
-
-                            <div class="hover-background-change d-sm-none d-md-block" *ngFor="let contact of contacts"
-                                (click)="selectContact(contact)">
-                                <mat-card class="col-12 d-flex align-items-center user-card"
-                                    [class]="selectedContact==contact? 'selected-contact':''">
+                            <div class="hover-background-change d-none d-sm-block d-md-block"
+                                *ngFor="let contact of contacts" (click)="selectContact(contact)">
+                                <mat-card
+                                    class="col-12 d-flex align-items-center user-card {{selectedContact.username==contact.username? 'selected-contact':''}}">
                                     <div class="flex-grow-1 row align-items-center">
                                         <div mat-card-avatar class="col-2 card-avatar"
                                             style="background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg')">
@@ -145,7 +130,7 @@
                                 </mat-card>
                             </div>
 
-                            <div class="hover-background-change d-none d-sm-block d-md-none"
+                            <div class="hover-background-change d-block d-sm-none d-md-none"
                                 *ngFor="let contact of contacts" (click)="selectContact(contact);drawer.close();">
                                 <mat-card class="col-12 d-flex align-items-center user-card">
                                     <div class="flex-grow-1 row align-items-center">
@@ -169,30 +154,10 @@
                     </mat-tab>
                     <mat-tab label="Online">
                         <ng-template matTabContent>
-                            <!-- <div class="hover-background-change" *ngFor="let contact of onlineContacts"
-                                (click)="selectContact(contact)">
-                                <mat-card class="col-12 d-flex align-items-center user-card"
-                                    [class]="selectedContact==contact? 'selected-contact':''">
-                                    <div class="flex-grow-1 row align-items-center">
-                                        <div mat-card-avatar class="col-2 card-avatar"
-                                            style="background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg')">
-                                        </div>
-                                        <div class="col-8">
-                                            <mat-card-title class="text-truncate">{{contact.firstName}}
-                                                {{contact.lastName}}</mat-card-title>
-                                            <mat-card-subtitle class="text-truncate">{{contact.username}}
-                                            </mat-card-subtitle>
-                                        </div>
-                                    </div>
-                                    <div class="col-1 mute-block d-flex justify-content-center align-items-center">
-                                        <mat-icon *ngIf="mutedContacts.includes(contact.username)">volume_off</mat-icon>
-                                        <mat-icon *ngIf="blockedContacts.includes(contact.username)">block</mat-icon>
-                                    </div>
-                                </mat-card>
-                            </div> -->
+
                             <div class="hover-background-change d-none d-sm-block d-md-none"
                                 *ngFor="let contact of onlineContacts" (click)="selectContact(contact);drawer.close();">
-                                <mat-card class="col-12 d-flex align-items-center user-card">
+                                <mat-card class="col-12 d-flex align-items-center user-card {{selectedContact.username==contact.username? 'selected-contact':''}}">
                                     <div class="flex-grow-1 row align-items-center">
                                         <div mat-card-avatar class="col-2 card-avatar"
                                             style="background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg')">
@@ -212,8 +177,8 @@
                             </div>
                             <div class="hover-background-change d-sm-none d-md-block"
                                 *ngFor="let contact of onlineContacts" (click)="selectContact(contact)">
-                                <mat-card class="col-12 d-flex align-items-center user-card"
-                                    [class]="selectedContact==contact? 'selected-contact':''">
+                                <mat-card
+                                    class="col-12 d-flex align-items-center user-card {{selectedContact.username==contact.username? 'selected-contact':''}}">
                                     <div class="flex-grow-1 row align-items-center">
                                         <div mat-card-avatar class="col-2 card-avatar"
                                             style="background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg')">
@@ -238,13 +203,12 @@
             </mat-drawer>
             <mat-drawer-content class="col-12 col-sm-12 d-inline-flex justify-content-center align-items-center"
                 [ngClass]="{'col-lg-8' : drawer.opened, 'col-lg-12':!drawer.opened,'col-md-8':drawer.opened,'col-md-12':!drawer.opened}">
-                <!-- [ngClass]="{drawer.opened ? 'col-lg-8' : 'col-lg-12', drawer.opened ? 'col-md-8' : 'col-md-12'}"> -->
                 <button mat-fab class="toggle-negative" color="primary" (click)="drawer.toggle()">
                     <mat-icon>&nbsp;&nbsp;{{drawer.opened? ' arrow_back_ios' : 'arrow_forward_ios'}}</mat-icon>
                 </button>
                 <app-select-chat class="flex-grow-1" *ngIf="!selectedContact.username"></app-select-chat>
                 <app-chatbox class="flex-grow-1" *ngIf="selectedContact.username" (contactsrefresh)="loadContacts()"
-                    [contact]="selectedContact"></app-chatbox>
+                    [contact]="selectedContact" [contacts]="contacts"></app-chatbox>
             </mat-drawer-content>
         </mat-drawer-container>
     </div>

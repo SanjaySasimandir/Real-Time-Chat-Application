@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { WebSocketService } from './services/socket/web-socket.service';
-import { UserauthService } from './services/userauth.service';
 
 @Component({
   selector: 'app-root',
@@ -14,16 +12,9 @@ import { UserauthService } from './services/userauth.service';
 export class AppComponent implements OnInit {
   title = 'ChatApp';
 
-  constructor(private webSocket: WebSocketService, private userAuth: UserauthService) { }
+  constructor() { }
 
   ngOnInit(): void {
-
-    this.webSocket.emit('id', localStorage.getItem('username'));
-
-    this.webSocket.listen('test event').subscribe((data: any) => {
-      console.log(data);
-    });
-
 
   }
 }

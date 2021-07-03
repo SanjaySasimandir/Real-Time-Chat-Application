@@ -15,19 +15,16 @@ mat-card-subtitle {
 
 .chat-container {
     display: flex;
-    height: calc(100vh - 76px);
+    height: calc(100vh - 58px);
     flex-flow: column;
 }
 
 .message-box {
     flex: 1 !important;
     height: auto !important;
-    /* height:  !important; */
     overflow: auto !important;
-    margin: 0.5rem 0.5rem 0.5rem 0.5rem !important;
-    /* width: 100%; */
-    /* width: calc(100% + 1.75rem); */
-    /* margin-right: -2.75rem !important; */
+    /* margin: 0.5rem 0.5rem 0.5rem 0.5rem !important; */
+    padding-top: 0.85rem;
 }
 
 .top-bar-card {
@@ -68,7 +65,51 @@ textarea {
     border-radius: 7.5px;
 }
 
+.img-message-wrapper {
+    margin: 0.75rem;
+    padding: 0.35rem;
+    background-color: #cbd3e4;
+    border-radius: 7.5px;
+}
+
 .message-wrapper-user {
     background-color: #3f51b5;
     color: #fafafa;
+}
+
+.img-round-border {
+    border-radius: 4.5px;
+}
+
+.message-options {
+    margin-bottom: -2.75rem;
+    padding-right: 0.35rem;
+    margin-top: -1rem;
+}
+
+.message-options-user-icon {
+    color: #fafafa;
+}
+
+.flip-icon {
+    transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+    transform: scale(-1, 1);
+}
+
+.user-card {
+    cursor: pointer;
+    margin: 0.5em;
+    width: calc(100% - 1em);
+}
+
+.hover-background-change :hover {
+    background: #dadce0 !important;
+}
+
+.modal-body {
+    background: #f1f1f1;
 }

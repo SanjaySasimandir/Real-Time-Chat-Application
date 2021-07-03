@@ -47,11 +47,17 @@ io.on('connection', (socket) => {
         console.log(data)
         socket.join(id);
         socket.emit('test event', "hello" + id);
-        UserData.find({ username: id }, { availability: 1 }).then(data => {
+        UserData.find({ username: id }, { availability: 1, contacts: 1 }).then(data => {
             if (data[0]) {
                 data[0].availability = "online";
                 data[0].save()
             }
+            data[0].contacts.forEach(contact => {
+                if (connectedUsers.includes(contact)) {
+                    refreshOnlineContacts(contact);
+                }
+
+            });
         });
     });
 
@@ -62,14 +68,6 @@ io.on('connection', (socket) => {
 
     socket.on('send message', (data) => {
         sendMessageToContact(data, id);
-        // console.log(data);
-        // console.log(joinedrooms)
-        // if (connectedUsers.includes(data.contactUsername) && joinedrooms[data.contactUsername] == id) {
-        //     console.log('forwarded')
-        //     io.to(data.contactUsername).emit('receive message', { message: data ,time:Date.now()});
-
-        // }
-        // ChatData.find({})
     });
 
     socket.on('send contacts request', (username) => {
@@ -79,23 +77,40 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('User Disconnected: ' + id);
-        delete connectedUsers[connectedUsers.indexOf(id)];
+        connectedUsers = connectedUsers.filter(item => item != id);
         delete joinedrooms[id];
-        UserData.find({ username: id }, { availability: 1 }).then(data => {
+        console.log(connectedUsers)
+        UserData.find({ username: id }, { availability: 1, contacts: 1 }).then(data => {
             if (data[0]) {
                 data[0].availability = "offline";
                 data[0].save()
             }
+            data[0].contacts.forEach(contact => {
+                if (connectedUsers.includes(contact)) {
+                    refreshOnlineContacts(contact);
+                }
+
+            });
         });
     })
 });
+
+function refreshOnlineContacts(username) {
+    io.to(username).emit('refresh online contacts', { "message": "refresh" });
+}
 
 function getContacts(username) {
     UserData.find({ username: username }, { contacts: 1, mutedContacts: 1, blockedContacts: 1, _id: 0 }).then(data => {
         if (data[0].contacts) {
             let contactsToSend;
             UserData.find({ username: { $in: data[0].contacts } }, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(users => {
-                contactsToSend = { "message": "success", "contacts": users.reverse(), "mutedContacts": data[0].mutedContacts, "blockedContacts": data[0].blockedContacts };
+                let contactsFromDB = users;
+                let contactsInRecentOrder = [];
+                data[0].contacts.forEach(contact => {
+                    contactsInRecentOrder.push(contactsFromDB.filter(item => item.username == contact)[0])
+                });
+                console.log(username, data[0].contacts)
+                contactsToSend = { "message": "success", "contacts": contactsInRecentOrder.reverse(), "mutedContacts": data[0].mutedContacts, "blockedContacts": data[0].blockedContacts, "contactNamesList": data[0].contacts };
                 io.to(username).emit('receive contacts', contactsToSend);
             });
         }
@@ -108,27 +123,60 @@ function getContacts(username) {
 
 function sendChat(id, contactName) {
     ChatData.find({ firstUser: { $in: [id, contactName] }, secondUser: { $in: [id, contactName] } }, { _id: 0 }).then(data => {
-        console.log(id, contactName, "found");
-        io.to(id).emit('receive old messages', data[0]);
+        if (data[0]) {
+            io.to(id).emit('receive old messages', data[0]);
+        }
     });
 }
 
 
 function sendMessageToContact(data, id) {
-    console.log(data);
     if (connectedUsers.includes(data.contactUsername) && joinedrooms[data.contactUsername] == id) {
-        console.log('forwarded')
         let message = { messageContent: data.message, messageType: data.messageType, messageSender: data.username };
         io.to(data.contactUsername).emit('receive message from contact', { message: message, time: Date.now() });
+    }
+    else if (connectedUsers.includes(data.contactUsername)) {
+        io.to(data.contactUsername).emit('new message received', { "contactName": id });
     }
     addMessageToChat(id, data.contactUsername, data);
 }
 function addMessageToChat(id, contactName, data) {
     ChatData.find({ firstUser: { $in: [id, contactName] }, secondUser: { $in: [id, contactName] } }).then(ChatRoom => {
-        console.log(id, contactName, "found");
-        let message = { messageContent: data.message, messageType: data.messageType, messageSender: data.username };
-        ChatRoom[0].chat.push(message);
-        ChatRoom[0].save();
+        if (ChatRoom[0]) {
+            let message = { messageContent: data.message, messageType: data.messageType, messageSender: data.username };
+            ChatRoom[0].chat.push(message);
+            ChatRoom[0].save();
+        }
+    });
+    UserData.find({ username: { $in: [id, contactName] } }, { contacts: 1, mutedContacts: 1, blockedContacts: 1 }).then(users => {
+        var refreshArray = [];
+        if (users[0]) {
+            users[0].contacts = users[0].contacts.filter(item => item != contactName);
+            users[0].contacts.push(contactName);
+            UserData.findOneAndUpdate({ username: id }, users[0], (err, res) => {
+                console.log(res)
+            });
+            refreshArray.push(id);
+        }
+        if (users[1]) {
+            if (!users[1].mutedContacts.includes(id) && !users[1].blockedContacts.includes(id)) {
+                users[1].contacts = users[1].contacts.filter(item => item != id);
+                users[1].contacts.push(id);
+                UserData.findOneAndUpdate({ username: contactName }, users[1], (err, res) => {
+                    if (err) console.log(err)
+                });
+                refreshArray.push(contactName);
+            }
+        }
+        refreshContacts(refreshArray);
+    });
+}
+
+function refreshContacts(usersArray) {
+    usersArray.forEach((item) => {
+        if (connectedUsers.includes(item)) {
+            getContacts(item);
+        }
     });
 }
 

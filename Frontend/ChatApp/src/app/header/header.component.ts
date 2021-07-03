@@ -12,12 +12,8 @@ export class HeaderComponent implements OnInit {
   constructor(private router: Router, public userAuth: UserauthService) { }
 
   logout() {
-    this.userAuth.logOutUser().subscribe(status => {
-      if (status.message == "success") {
-        console.log('logoute')
-        this.router.navigate(['/']);
-      }
-    });
+    this.userAuth.logOutUser();
+    this.router.navigate(['/']);
   }
 
   ngOnInit(): void {

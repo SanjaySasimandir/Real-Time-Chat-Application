@@ -6,6 +6,7 @@ import { ChatModel } from 'src/app/models/chat.model';
 import { SendMessageModel } from 'src/app/models/sendMessage.model';
 import { WebSocketService } from 'src/app/services/socket/web-socket.service';
 import { UserauthService } from 'src/app/services/userauth.service';
+import { MessageModel } from 'src/app/models/message.model';
 
 @Component({
   selector: 'app-chatbox',
@@ -16,6 +17,7 @@ import { UserauthService } from 'src/app/services/userauth.service';
 export class ChatboxComponent implements OnInit {
 
   @Input() contact = new ContactModel('', '', '', '');
+  @Input() contacts: ContactModel[] = [];
 
   @Output() contactsrefresh = new EventEmitter();
 
@@ -53,6 +55,12 @@ export class ChatboxComponent implements OnInit {
       if (status.message == "success") {
         this.muted = status.muteStatus;
         this.blocked = status.blockStatus;
+        if (!this.blocked) {
+          this.joinChatAndRecieveMessages();
+        }
+        else {
+          this.chatIsLoading = false;
+        }
       }
     });
   }
@@ -71,21 +79,36 @@ export class ChatboxComponent implements OnInit {
       if (status.message == "success") {
         this.blocked = status.blockStatus;
         this.contactsrefresh.emit();
+        if (!this.blocked) {
+          this.chatIsLoading = true;
+          this.joinChatAndRecieveMessages();
+        }
       }
     });
   }
   messagesInChat: ChatModel = new ChatModel('', '', []);
+  chatIsLoading: boolean = true;
+
+  joinChatAndRecieveMessages() {
+    this.webSocket.emit('join chat', this.contact.username);
+    this.webSocket.listen('receive old messages').subscribe((chat: any) => {
+      this.messagesInChat = chat;
+      this.chatIsLoading = false;
+    });
+  }
   ngOnInit(): void {
+    this.chatIsLoading = true;
     this.getMuteBlockStatus();
     this.uploadToggle = false;
     this.newMessage.setValue('');
     console.log('here' + this.contact.username)
     this.webSocket.emit('join chat', this.contact.username);
 
-    this.webSocket.listen('receive old messages').subscribe((chat: any) => {
-      this.messagesInChat = chat;
-      console.log(this.messagesInChat)
-    });
+    // this.webSocket.listen('receive old messages').subscribe((chat: any) => {
+    //   this.messagesInChat = chat;
+    //   this.chatIsLoading = false;
+    //   console.log(this.messagesInChat)
+    // });
     this.webSocket.listen('receive message from contact').subscribe((thing: any) => {
       this.passMessage(thing)
     });
@@ -124,6 +147,12 @@ export class ChatboxComponent implements OnInit {
       this.messageTimes.push(data.time);
       this.messagesInChat.chat.push(data.message);
     }
+  }
+
+  messageToForward = new MessageModel('', '', '');
+  forwardMessage(contactUserName: string) {
+    let messageToSend = new SendMessageModel(this.username, contactUserName, this.messageToForward.messageContent, this.messageToForward.messageType);
+    this.webSocket.emit('send message', messageToSend);
   }
 
   username = localStorage.getItem('username') || '';

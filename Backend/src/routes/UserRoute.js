@@ -30,19 +30,6 @@ userRouter.post('/login', (req, res) => {
     })
 });
 
-userRouter.post('/logout', (req, res) => {
-    var id = req.body.id;
-    UserData.findById({ _id: id }).then(data => {
-        if (data[0]) {
-            data[0].availability = "offline";
-            data[0].save()
-            res.send({ "message": "success" });
-        }
-        else {
-            res.send({ "message": "failure" });
-        }
-    })
-});
 
 userRouter.post('/dupeUsernameCheck', (req, res) => {
     var username = req.body.username;
@@ -170,7 +157,8 @@ userRouter.post('/toggleBlock', (req, res) => {
         if (data[0]) {
             if (data[0].blockedContacts.includes(contactUsername)) {
                 blockStatus = false;
-                delete data[0].blockedContacts[data[0].blockedContacts.indexOf(contactUsername)];
+                // delete data[0].blockedContacts[data[0].blockedContacts.indexOf(contactUsername)];
+                data[0].blockedContacts = data[0].blockedContacts.filter(item => item != contactUsername);
             }
             else {
                 data[0].blockedContacts.push(contactUsername);
@@ -197,7 +185,8 @@ userRouter.post('/toggleMute', (req, res) => {
     UserData.find({ _id: id }, { mutedContacts: 1 }).then(data => {
         if (data[0]) {
             if (data[0].mutedContacts.includes(contactUsername)) {
-                delete data[0].mutedContacts[data[0].mutedContacts.indexOf(contactUsername)];
+                // delete data[0].mutedContacts[data[0].mutedContacts.indexOf(contactUsername)];
+                data[0].mutedContacts = data[0].mutedContacts.filter(item => item != contactUsername);
             }
             else {
                 data[0].mutedContacts.push(contactUsername);
@@ -221,7 +210,8 @@ userRouter.get('/redousers', (req, res) => {
     UserData.find().then(data => {
         console.log(data[0]);
         for (let i = 0; i < data.length; i++) {
-            data[i].contacts=[]
+            data[i].mutedContacts = []
+            data[i].blockedContacts = []
             data[i].save()
         }
         res.send('here');

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ContactModel } from '../models/contact.model';
 import { WebSocketService } from '../services/socket/web-socket.service';
@@ -14,15 +15,17 @@ import { ChatboxComponent } from './chatbox/chatbox.component';
 export class ChatComponent implements OnInit {
   @ViewChild(ChatboxComponent) child!: ChatboxComponent;
 
-  constructor(private router: Router, public userAuth: UserauthService, private webSocket: WebSocketService) { }
+  constructor(private router: Router, public userAuth: UserauthService, private webSocket: WebSocketService, private _snackBar: MatSnackBar) { }
+
+  newMessageSnackBar(contactName: string) {
+    this._snackBar.open('@' + contactName + ' sent you a message', '', {
+      duration: 5000,
+    });
+  }
 
   logout() {
-    this.userAuth.logOutUser().subscribe(status => {
-      if (status.message == "success") {
-        console.log('logoute')
-        this.router.navigate(['/']);
-      }
-    });
+    this.userAuth.logOutUser();
+    this.router.navigate(['/login']);
   }
 
   searchItem = new FormControl('');
@@ -50,21 +53,12 @@ export class ChatComponent implements OnInit {
   mutedContacts: string[] = [];
   blockedContacts: string[] = [];
   loadContacts() {
-    // this.userAuth.getContacts().subscribe(data => {
-    //   if (data.message == "success") {
-    //     this.contacts = data.contacts.reverse();
-    //     this.mutedContacts = data.mutedContacts;
-    //     this.blockedContacts = data.blockedContacts;
-    //     this.noContacts = false;
-    //   }
-    //   else {
-    //     this.noContacts = true;
-    //   }
-    // });
     this.webSocket.emit('send contacts request', (localStorage.getItem('username')));
     this.webSocket.listen('receive contacts').subscribe((data: any) => {
       if (data.message == "success") {
         this.contacts = data.contacts;
+        console.log(this.contacts)
+        console.log(this.selectedContact)
         this.mutedContacts = data.mutedContacts;
         this.blockedContacts = data.blockedContacts;
         this.noContacts = false;
@@ -119,6 +113,14 @@ export class ChatComponent implements OnInit {
   ngOnInit(): void {
     this.loadContacts();
     this.loadOnlineContacts();
+    this.webSocket.emit('id', localStorage.getItem('username'));
+    this.webSocket.listen('new message received').subscribe((data: any) => {
+      this.newMessageSnackBar(data.contactName);
+    });
+    this.webSocket.listen('refresh online contacts').subscribe(status => {
+      this.loadOnlineContacts();
+    })
+
 
   }
 
