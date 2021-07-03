@@ -58,18 +58,18 @@
             <mat-error *ngIf="this.phone.invalid">Please enter your phone number</mat-error>
           </mat-form-field>
 
-          <mat-form-field class="col-12" appearance="outline">
+          <!-- <mat-form-field class="col-12" appearance="outline">
             <mat-label>Bio</mat-label>
             <textarea matInput [formControl]="bio" maxlength="120" placeholder="I'm available to chat"
               required></textarea>
             <mat-error *ngIf="this.bio.invalid">Please enter a bio</mat-error>
-          </mat-form-field>
+          </mat-form-field> -->
 
           <mat-hint>Profile Picture:</mat-hint>
           <input type="file" class="form-control col-12" [formControl]="profilePicture" id="profilepic" single
             placeholder="Select a profile picture" accept="image/*" (change)="imageSelected($event)" required>
 
-          <img [src]="finalPictureString" class="col-5 w-100" alt="">
+          <img class="col-5 w-100 form-control" *ngIf="finalPictureString" [src]="finalPictureString" alt="">
 
           <div class=" col-12 d-flex justify-content-between">
           <button mat-button color="primary" type="button"

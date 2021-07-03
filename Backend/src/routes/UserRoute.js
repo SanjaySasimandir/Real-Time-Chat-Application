@@ -72,49 +72,24 @@ userRouter.post('/searchuser', (req, res) => {
 userRouter.post('/addContactToBoth', (req, res) => {
     var firstUsername = req.body.firstUsername;
     var secondUsername = req.body.secondUsername;
-    UserData.find({ username: { $in: [firstUsername, secondUsername] } }).then(data => {
-        if (data[0] && data[1]) {
-            // if (data[0].contacts.includes(secondUsername)) {
-            //     delete data[0].contacts[data[0].contacts.indexOf(secondUsername)];
-            // }
+    UserData.find({ username: firstUsername }, { contacts: 1 }).then(data => {
+        data[0].contacts.push(secondUsername);
+        data[0].save()
 
-            data[0].contacts.push(secondUsername);
-            data[0].save();
-
-            // if (data[1].contacts.includes(firstUsername)) {
-            //     delete data[1].contacts[data[1].contacts.indexOf(firstUsername)];
-            // }
-            data[1].contacts.push(firstUsername);
-            data[1].save();
+        UserData.find({ username: secondUsername }, { contacts: 1 }).then(data2 => {
+            data2[0].contacts.push(firstUsername);
+            data2[0].save()
 
             var newChat = new ChatData();
             newChat.firstUser = firstUsername;
             newChat.secondUser = secondUsername;
             newChat.chat = [];
             newChat.save()
-
-
             res.send({ "message": "success" });
-        }
-        else {
-            res.send({ "message": "failure" });
-        }
+        });
     });
 });
 
-// userRouter.post('/getContacts', (req, res) => {
-//     var id = req.body.id;
-//     UserData.find({ _id: id }, { contacts: 1, mutedContacts: 1, blockedContacts: 1, _id: 0 }).then(data => {
-//         if (data[0].contacts) {
-//             UserData.find({ username: { $in: data[0].contacts } }, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(users => {
-//                 res.send({ "message": "success", "contacts": users, "mutedContacts": data[0].mutedContacts, "blockedContacts": data[0].blockedContacts });
-//             });
-//         }
-//         else {
-//             res.send({ "message": "failure" });
-//         }
-//     });
-// });
 
 userRouter.post('/getOnlineContacts', (req, res) => {
     var id = req.body.id;
