@@ -31,14 +31,16 @@
 
     </mat-card>
     <!-- <div class="message-box">message-box</div> -->
-    <div class="message-box d-flex flex-column justify-content-center align-items-center" *ngIf="chatIsLoading && !blocked">
+    <div class="message-box d-flex flex-column justify-content-center align-items-center"
+        *ngIf="chatIsLoading && !blocked">
         <mat-spinner></mat-spinner>
     </div>
     <div class="message-box d-flex flex-column justify-content-center align-items-center" *ngIf="blocked">
         This user is blocked.
     </div>
     <!-- Message Box Starts -->
-    <div class="message-box d-flex flex-column" #messageScroll [scrollTop]="messageScroll.scrollHeight" *ngIf="!chatIsLoading && !blocked">
+    <div class="message-box d-flex flex-column" #messageScroll [scrollTop]="messageScroll.scrollHeight"
+        *ngIf="!chatIsLoading && !blocked">
         <div class="col-12" *ngFor="let message of messagesInChat.chat">
             <div class="justify-content-start" *ngIf="message.messageSender==contact.username">
                 <div class="col-5 d-flex justify-content-end me-auto message-options">
@@ -50,16 +52,30 @@
                             <mat-icon class="flip-icon">reply</mat-icon>
                             <span>Forward</span>
                         </button>
+                        <button mat-menu-item [cdkCopyToClipboard]="message.messageContent.toString()">
+                            <mat-icon>content_copy</mat-icon>
+                            <span>Copy</span>
+                        </button>
                     </mat-menu>
                 </div>
                 <div class="col-5 me-auto">
                     <div class="text-break message-wrapper" *ngIf="message.messageType=='text'">
                         {{message.messageContent}}
+                        <div class="d-flex">
+                            <small class="ms-auto">
+                                <mat-hint>{{message.messageTime}}</mat-hint>
+                            </small>
+                        </div>
                     </div>
                     <div class="img-message-wrapper" *ngIf="message.messageType.split('/')[0]=='image'">
                         <img class="img-responsive w-100 img-round-border"
                             src="data:{{message.messageType}};base64,{{message.messageContent}}"
                             alt="Image From {{contact.username}}">
+                        <div class="d-flex">
+                            <small class="ms-auto">
+                                <mat-hint>{{message.messageTime}}</mat-hint>
+                            </small>
+                        </div>
                     </div>
                 </div>
                 <!-- <div class="col-5 me-auto message-wrapper message-wrapper"
@@ -80,16 +96,30 @@
                             <mat-icon class="flip-icon">reply</mat-icon>
                             <span>Forward</span>
                         </button>
+                        <button mat-menu-item [cdkCopyToClipboard]="message.messageContent.toString()">
+                            <mat-icon>content_copy</mat-icon>
+                            <span>Copy</span>
+                        </button>
                     </mat-menu>
                 </div>
                 <div class="col-5 ms-auto">
                     <div class="text-break message-wrapper message-wrapper-user" *ngIf="message.messageType=='text'">
                         {{message.messageContent}}
+                        <div class="d-flex">
+                            <small class="ms-auto">
+                                <mat-hint class="user-message-date">{{message.messageTime}}</mat-hint>
+                            </small>
+                        </div>
                     </div>
                     <div class="img-message-wrapper message-wrapper-user"
                         *ngIf="message.messageType.split('/')[0]=='image'">
                         <img class="img-responsive w-100 img-round-border"
                             src="data:{{message.messageType}};base64,{{message.messageContent}}" alt="Image From You">
+                        <div class="d-flex">
+                            <small class="ms-auto">
+                                <mat-hint class="user-message-date">{{message.messageTime}}</mat-hint>
+                            </small>
+                        </div>
                     </div>
                 </div>
                 <!-- <div class="col-5 ms-auto message-wrapper message-wrapper-user"
@@ -120,15 +150,9 @@
         </button>
 
         <mat-form-field appearance="fill" class="w-100 message-input" *ngIf="!uploadToggle">
-            <textarea matInput [formControl]="newMessage" placeholder="Enter a message" rows="{{inputBoxSize}}"
-                (input)="inputBoxResize()"></textarea>
+            <textarea matInput [formControl]="newMessage" placeholder="Enter a message" cdkTextareaAutosize
+                cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
         </mat-form-field>
-        <!-- <mat-form-field appearance="fill" class="w-100 message-input">
-            <textarea matInput [formControl]="newMessage" #inputScroll placeholder="Enter a message" rows="{{inputBoxSize}}" (click)="consoleThis(inputScroll)" (input)="inputBoxResize1(inputScroll.scrollHeight)"></textarea>
-        </mat-form-field> -->
-        <!-- <mat-form-field appearance="fill" class="w-100 message-input">
-            <textarea matInput [formControl]="newMessage" #inputScroll  (click)="consoleThis(inputScroll.scrollHeight)" placeholder="Enter a message"></textarea>
-        </mat-form-field> -->
         <button mat-fab matSuffix color="primary" *ngIf="!uploadToggle" (click)="sendMessage()"
             [disabled]="!this.newMessage.value">
             <mat-icon>send</mat-icon>
@@ -136,11 +160,6 @@
     </mat-card>
 </div>
 
-
-<!-- Button trigger modal -->
-<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Launch demo modal
-</button> -->
 
 <div class="modal fade" id="forwardModal" tabindex="-1" aria-labelledby="forwardModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm modal-dialog-scrollable">
@@ -151,8 +170,8 @@
             </div>
             <div class="modal-body">
                 <div *ngFor="let contactUser of contacts">
-                    <div class="hover-background-change" *ngIf="contactUser.username != contact.username"
-                        (click)="forwardMessage(contactUser.username)" data-bs-dismiss="modal">
+                    <div class="hover-background-change" (click)="forwardMessage(contactUser.username)"
+                        data-bs-dismiss="modal">
                         <mat-card class="col-12 d-flex align-items-center user-card">
                             <div class="flex-grow-1 row align-items-center">
                                 <div mat-card-avatar class="col-2 card-avatar"

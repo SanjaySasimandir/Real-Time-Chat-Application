@@ -29,10 +29,6 @@ mat-drawer {
     padding: 0.75rem;
 }
 
-/* mat-drawer-content {
-    width: auto;
-} */
-
 .drawer-toggle-icon {
     color: #fafafa;
 }
@@ -41,14 +37,14 @@ mat-drawer {
     margin-left: -1.75rem;
 }
 
+.user-search-input {
+    padding-top: 1.34375em;
+}
+
 .card-avatar {
     background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
     background-size: cover;
     margin-left: 0.75rem;
-}
-
-mat-card {
-    /* padding-bottom: 0; */
 }
 
 mat-card-subtitle {

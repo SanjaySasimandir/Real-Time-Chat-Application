@@ -61,6 +61,7 @@ textarea {
 .message-wrapper {
     margin: 0.75rem;
     padding: 0.75rem;
+    padding-bottom: 0 ;
     background-color: #cbd3e4;
     border-radius: 7.5px;
 }
@@ -68,6 +69,7 @@ textarea {
 .img-message-wrapper {
     margin: 0.75rem;
     padding: 0.35rem;
+    padding-bottom: 0;
     background-color: #cbd3e4;
     border-radius: 7.5px;
 }
@@ -112,4 +114,8 @@ textarea {
 
 .modal-body {
     background: #f1f1f1;
+}
+
+.user-message-date {
+    color: #bec0c4 !important;
 }

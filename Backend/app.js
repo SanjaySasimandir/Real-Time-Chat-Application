@@ -132,7 +132,7 @@ function sendChat(id, contactName) {
 
 function sendMessageToContact(data, id) {
     if (connectedUsers.includes(data.contactUsername) && joinedrooms[data.contactUsername] == id) {
-        let message = { messageContent: data.message, messageType: data.messageType, messageSender: data.username };
+        let message = { messageContent: data.message, messageType: data.messageType, messageSender: data.username, messageTime: data.messageTime };
         io.to(data.contactUsername).emit('receive message from contact', { message: message, time: Date.now() });
     }
     else if (connectedUsers.includes(data.contactUsername)) {
@@ -143,33 +143,36 @@ function sendMessageToContact(data, id) {
 function addMessageToChat(id, contactName, data) {
     ChatData.find({ firstUser: { $in: [id, contactName] }, secondUser: { $in: [id, contactName] } }).then(ChatRoom => {
         if (ChatRoom[0]) {
-            let message = { messageContent: data.message, messageType: data.messageType, messageSender: data.username };
+            let message = { messageContent: data.message, messageType: data.messageType, messageSender: data.username, messageTime: data.messageTime };
             ChatRoom[0].chat.push(message);
             ChatRoom[0].save();
         }
     });
-    UserData.find({ username: { $in: [id, contactName] } }, { contacts: 1, mutedContacts: 1, blockedContacts: 1 }).then(users => {
+    UserData.find({ username: id }, { contacts: 1 }).then(user1 => {
         var refreshArray = [];
-        if (users[0]) {
-            users[0].contacts = users[0].contacts.filter(item => item != contactName);
-            users[0].contacts.push(contactName);
-            UserData.findOneAndUpdate({ username: id }, users[0], (err, res) => {
-                console.log(res)
+        if (user1[0]) {
+            user1[0].contacts = user1[0].contacts.filter(item => item != contactName);
+            user1[0].contacts.push(contactName);
+            UserData.findOneAndUpdate({ username: id }, user1[0], (err, res) => {
+                if (err) console.log(err)
             });
             refreshArray.push(id);
         }
-        if (users[1]) {
-            if (!users[1].mutedContacts.includes(id) && !users[1].blockedContacts.includes(id)) {
-                users[1].contacts = users[1].contacts.filter(item => item != id);
-                users[1].contacts.push(id);
-                UserData.findOneAndUpdate({ username: contactName }, users[1], (err, res) => {
-                    if (err) console.log(err)
-                });
-                refreshArray.push(contactName);
+        UserData.find({ username: contactName }, { contacts: 1, mutedContacts: 1, blockedContacts: 1 }).then(user2 => {
+            if (user2[0]) {
+                if (!user2[0].mutedContacts.includes(id) && !user2[0].blockedContacts.includes(id)) {
+                    user2[0].contacts = user2[0].contacts.filter(item => item != id);
+                    user2[0].contacts.push(id);
+                    UserData.findOneAndUpdate({ username: contactName }, user2[0], (err, res) => {
+                        if (err) console.log(err)
+                    });
+                    refreshArray.push(contactName);
+                }
             }
-        }
-        refreshContacts(refreshArray);
+            refreshContacts(refreshArray);
+        });
     });
+
 }
 
 function refreshContacts(usersArray) {

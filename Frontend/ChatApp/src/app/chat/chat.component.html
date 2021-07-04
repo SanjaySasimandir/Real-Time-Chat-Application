@@ -26,10 +26,10 @@
 
 
                             <form (ngSubmit)="searchUser()">
-                                <mat-form-field class="col-12" appearance="fill">
+                                <mat-form-field class="col-12 user-search-input" appearance="fill">
                                     <mat-label>Search users</mat-label>
                                     <input matInput [formControl]="searchItem" placeholder="johndoe12"
-                                        (input)="searchUser()" maxlength="20">
+                                        (input)="searchUser()" autocomplete="off" maxlength="20">
                                     <button mat-icon-button matSuffix *ngIf="this.searchItem.value"
                                         (click)="this.searchItem.setValue('')" type="button">
                                         <mat-icon>close</mat-icon>

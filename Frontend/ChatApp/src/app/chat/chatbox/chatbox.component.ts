@@ -7,6 +7,8 @@ import { SendMessageModel } from 'src/app/models/sendMessage.model';
 import { WebSocketService } from 'src/app/services/socket/web-socket.service';
 import { UserauthService } from 'src/app/services/userauth.service';
 import { MessageModel } from 'src/app/models/message.model';
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'app-chatbox',
@@ -26,6 +28,7 @@ export class ChatboxComponent implements OnInit {
 
   newMessage = new FormControl('');
   uploadToggle: boolean = false;
+  moment = moment()
 
   inputBoxSize = 1;
   inputBoxResize() {
@@ -132,9 +135,9 @@ export class ChatboxComponent implements OnInit {
     this.sendImageToSocketandPushtoChat(btoa(binaryString));
   }
   sendImageToSocketandPushtoChat(base64Image: string) {
-    let messageToSend = new SendMessageModel(this.username, this.contact.username, base64Image, this.selectedImage[0].type);
+    let messageToSend = new SendMessageModel(this.username, this.contact.username, base64Image, this.selectedImage[0].type, moment().format('lll'));
     this.webSocket.emit('send message', messageToSend);
-    let message = { messageContent: messageToSend.message, messageType: messageToSend.messageType, messageSender: messageToSend.username };
+    let message = { messageContent: messageToSend.message, messageType: messageToSend.messageType, messageSender: messageToSend.username, messageTime: messageToSend.messageTime };
     this.messagesInChat.chat.push(message);
 
   }
@@ -149,17 +152,17 @@ export class ChatboxComponent implements OnInit {
     }
   }
 
-  messageToForward = new MessageModel('', '', '');
+  messageToForward = new MessageModel('', '', '', '');
   forwardMessage(contactUserName: string) {
-    let messageToSend = new SendMessageModel(this.username, contactUserName, this.messageToForward.messageContent, this.messageToForward.messageType);
+    let messageToSend = new SendMessageModel(this.username, contactUserName, this.messageToForward.messageContent, this.messageToForward.messageType, moment().format('lll'));
     this.webSocket.emit('send message', messageToSend);
   }
 
   username = localStorage.getItem('username') || '';
   sendMessage() {
-    let messageToSend = new SendMessageModel(this.username, this.contact.username, this.newMessage.value, 'text');
+    let messageToSend = new SendMessageModel(this.username, this.contact.username, this.newMessage.value, 'text', moment().format('lll'));
     this.webSocket.emit('send message', messageToSend);
-    let message = { messageContent: messageToSend.message, messageType: messageToSend.messageType, messageSender: messageToSend.username };
+    let message = { messageContent: messageToSend.message, messageType: messageToSend.messageType, messageSender: messageToSend.username, messageTime: messageToSend.messageTime };
     this.messagesInChat.chat.push(message);
     this.newMessage.setValue('');
   }

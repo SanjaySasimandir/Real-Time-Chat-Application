@@ -49,9 +49,13 @@ import { LoginComponent } from './login/login.component';
 import { ChatComponent } from './chat/chat.component';
 import { ChatboxComponent } from './chat/chatbox/chatbox.component';
 import { SelectChatComponent } from './chat/select-chat/select-chat.component';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 const materialModules = [
   CdkTreeModule,
+  ClipboardModule,
+  TextFieldModule,
   MatAutocompleteModule,
   MatButtonModule,
   MatCardModule,

@@ -73,13 +73,16 @@ userRouter.post('/addContactToBoth', (req, res) => {
     var firstUsername = req.body.firstUsername;
     var secondUsername = req.body.secondUsername;
     UserData.find({ username: firstUsername }, { contacts: 1 }).then(data => {
-        data[0].contacts.push(secondUsername);
-        data[0].save()
+        if (!data[0].contacts.includes(secondUsername)) {
+            data[0].contacts.push(secondUsername);
+            data[0].save()
+        }
 
         UserData.find({ username: secondUsername }, { contacts: 1 }).then(data2 => {
-            data2[0].contacts.push(firstUsername);
-            data2[0].save()
-
+            if (!data2[0].contacts.includes(firstUsername)) {
+                data2[0].contacts.push(firstUsername);
+                data2[0].save()
+            }
             var newChat = new ChatData();
             newChat.firstUser = firstUsername;
             newChat.secondUser = secondUsername;
@@ -187,6 +190,7 @@ userRouter.get('/redousers', (req, res) => {
         for (let i = 0; i < data.length; i++) {
             data[i].mutedContacts = []
             data[i].blockedContacts = []
+            data[i].contacts = []
             data[i].save()
         }
         res.send('here');
