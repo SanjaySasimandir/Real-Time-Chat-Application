@@ -73,12 +73,4 @@ EmailVerifyRoute.post('/verifyMailOtp', (req, res) => {
 });
 
 
-EmailVerifyRoute.get('/test', (req, res) => {
-    var email = "makenism@gmail.com";
-    var otp = otpGenerator();
-    sendMessage(email, otp)
-    res.send({ "message": "success" });
-});
-
-
 module.exports = EmailVerifyRoute;

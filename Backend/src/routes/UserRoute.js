@@ -57,18 +57,6 @@ userRouter.post('/dupeEmailCheck', (req, res) => {
     })
 });
 
-// userRouter.post('/searchuser', (req, res) => {
-//     var username = req.body.username;
-//     UserData.find({ username: username }, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(data => {
-//         if (data[0]) {
-//             res.send({ "message": "found", "user": data[0] });
-//         }
-//         else {
-//             res.send({ "message": "notfound" });
-//         }
-//     })
-// });
-
 userRouter.post('/searchuser', (req, res) => {
     var searchterm = req.body.username;
     UserData.find({}, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(data => {
@@ -202,17 +190,5 @@ userRouter.post('/toggleMute', (req, res) => {
     });
 });
 
-userRouter.get('/redousers', (req, res) => {
-    UserData.find().then(data => {
-        console.log(data[0]);
-        for (let i = 0; i < data.length; i++) {
-            data[i].mutedContacts = []
-            data[i].blockedContacts = []
-            data[i].contacts = []
-            data[i].save()
-        }
-        res.send('here');
-    })
-});
 
 module.exports = userRouter;

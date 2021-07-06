@@ -166,10 +166,6 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  test() {
-    console.log(this.lastName.value)
-  }
-
 
   ngOnInit(): void {
   }
