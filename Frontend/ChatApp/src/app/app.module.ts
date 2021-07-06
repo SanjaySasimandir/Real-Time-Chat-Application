@@ -41,7 +41,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LandingComponent } from './landing/landing.component';
 import { RegisterComponent } from './register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -96,7 +95,6 @@ const materialModules = [
     HeaderComponent,
     FooterComponent,
     RoutesComponent,
-    LandingComponent,
     RegisterComponent,
     LoginComponent,
     ChatComponent,

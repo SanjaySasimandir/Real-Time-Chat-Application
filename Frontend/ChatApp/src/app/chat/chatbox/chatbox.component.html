@@ -3,8 +3,7 @@
 
 
         <div class="flex-grow-1 row align-items-center">
-            <div mat-card-avatar class="col-2 card-avatar"
-                style="background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg')">
+            <div mat-card-avatar class="col-2 card-avatar" style="background-image: url('{{contact.picture}}');">
             </div>
             <div class="col-9">
                 <mat-card-title>{{contact.firstName}} {{contact.lastName}}</mat-card-title>
@@ -44,11 +43,11 @@
         <div class="col-12" *ngFor="let message of messagesInChat.chat">
             <div class="justify-content-start" *ngIf="message.messageSender==contact.username">
                 <div class="col-5 d-flex justify-content-end me-auto message-options">
-                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <button mat-icon-button class="mat-message-menu" [matMenuTriggerFor]="menu">
                         <mat-icon>keyboard_arrow_down</mat-icon>
                     </button>
                     <mat-menu #menu="matMenu">
-                        <button mat-menu-item type="button" data-bs-toggle="modal" data-bs-target="#forwardModal">
+                        <button mat-menu-item type="button" data-bs-toggle="modal" (click)="messageToForward=message;" data-bs-target="#forwardModal">
                             <mat-icon class="flip-icon">reply</mat-icon>
                             <span>Forward</span>
                         </button>
@@ -142,7 +141,7 @@
         </button>
 
         <input class="form-control w-100 file-input" *ngIf="uploadToggle" single accept="image/*"
-            (change)="imageSelected($event)" type="file" placeholder="Upload an image">
+            (change)="imageSelected($event)" type="file" placeholder="Upload an image" (keydown)="enterPressed($event)">
 
         <button mat-fab matSuffix color="primary" *ngIf="uploadToggle" (click)="sendImageSelected()"
             [disabled]="!this.selectedImage">
@@ -151,13 +150,16 @@
 
         <mat-form-field appearance="fill" class="w-100 message-input" *ngIf="!uploadToggle">
             <textarea matInput [formControl]="newMessage" placeholder="Enter a message" cdkTextareaAutosize
-                cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+                cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" (keydown)="enterPressed($event)"></textarea>
         </mat-form-field>
+
         <button mat-fab matSuffix color="primary" *ngIf="!uploadToggle" (click)="sendMessage()"
             [disabled]="!this.newMessage.value">
             <mat-icon>send</mat-icon>
         </button>
     </mat-card>
+
+
 </div>
 
 
@@ -175,7 +177,7 @@
                         <mat-card class="col-12 d-flex align-items-center user-card">
                             <div class="flex-grow-1 row align-items-center">
                                 <div mat-card-avatar class="col-2 card-avatar"
-                                    style="background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg')">
+                                    style="background-image: url('{{contactUser.picture}}')">
                                 </div>
                                 <div class="col-8">
                                     <mat-card-title class="text-truncate">{{contactUser.firstName}}

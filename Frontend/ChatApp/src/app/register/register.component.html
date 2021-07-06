@@ -16,7 +16,7 @@
           <mat-form-field class="col-12" appearance="outline">
             <mat-icon matPrefix color="primary">alternate_email</mat-icon>
             <mat-label>Create a username</mat-label>
-            <input matInput [formControl]="username" placeholder="johndoe12" (input)="userNameFixer()" minlength="5"
+            <input matInput  autocomplete="off" [formControl]="username" placeholder="johndoe12" (input)="userNameFixer()" minlength="5"
               maxlength="16" autofocus required>
             <mat-error *ngIf="usernameTaken">This username is already taken, please choose another.</mat-error>
           </mat-form-field>
@@ -40,27 +40,27 @@
         <form (ngSubmit)="detailsPage=false; passwordPage=true">
           <mat-form-field class="col-12" appearance="outline">
             <mat-label>First Name</mat-label>
-            <input matInput [formControl]="firstName" placeholder="John" minlength="1" maxlength="35" autofocus
+            <input matInput  autocomplete="off" [formControl]="firstName" placeholder="John" minlength="1" maxlength="35" autofocus
               required>
             <mat-error *ngIf="this.firstName.invalid">Please enter your first name</mat-error>
           </mat-form-field>
 
           <mat-form-field class="col-12" appearance="outline">
             <mat-label>Last Name</mat-label>
-            <input matInput [formControl]="lastName" placeholder="Doe" minlength="1" maxlength="35" required>
+            <input matInput  autocomplete="off" [formControl]="lastName" placeholder="Doe" minlength="1" maxlength="35" required>
             <mat-error *ngIf="this.lastName.invalid">Please enter your last name</mat-error>
           </mat-form-field>
 
           <mat-form-field class="col-12" appearance="outline">
             <mat-label>Phone</mat-label>
-            <input type="phone" matInput [formControl]="phone" placeholder="1234567890" maxlength="12" autofocus
+            <input type="phone" matInput  autocomplete="off" [formControl]="phone" placeholder="1234567890" maxlength="12" autofocus
               required>
             <mat-error *ngIf="this.phone.invalid">Please enter your phone number</mat-error>
           </mat-form-field>
 
           <!-- <mat-form-field class="col-12" appearance="outline">
             <mat-label>Bio</mat-label>
-            <textarea matInput [formControl]="bio" maxlength="120" placeholder="I'm available to chat"
+            <textarea matInput  autocomplete="off" [formControl]="bio" maxlength="120" placeholder="I'm available to chat"
               required></textarea>
             <mat-error *ngIf="this.bio.invalid">Please enter a bio</mat-error>
           </mat-form-field> -->
@@ -93,7 +93,7 @@
         <mat-form-field class="col-12" appearance="outline">
           <mat-icon matPrefix color="primary">lock</mat-icon>
           <mat-label>Create a password</mat-label>
-          <input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="johndoe12" [formControl]="password"
+          <input matInput  autocomplete="off" [type]="hidePassword ? 'password' : 'text'" placeholder="johndoe12" [formControl]="password"
             placeholder="Enter your password" minlength="6" maxlength="20" required>
           <button mat-icon-button matSuffix *ngIf="this.password.value!=''" type="button"
             (click)="this.password.setValue('')">
@@ -124,7 +124,7 @@
       <mat-form-field class="col-12" appearance="outline">
         <mat-icon matPrefix color="primary">mail_outline</mat-icon>
         <mat-label>Enter your email address</mat-label>
-        <input matInput type="email" [formControl]="email" placeholder="johndoe@example.com" (input)="emailTaken=false"
+        <input matInput  autocomplete="off" type="email" [formControl]="email" placeholder="johndoe@example.com" (input)="emailTaken=false"
           autofocus required>
         <mat-error *ngIf="emailTaken">This email is already registered, use another or sign in.</mat-error>
         <mat-error *ngIf="this.email.invalid">Please enter a valid email</mat-error>
@@ -175,7 +175,7 @@
         <mat-form-field class="col-12" appearance="fill">
           <mat-icon matPrefix color="primary">vpn_key</mat-icon>
           <mat-label>Enter OTP</mat-label>
-          <input matInput [formControl]="otp" placeholder="123456" minlength="6" maxlength="6" autofocus required>
+          <input matInput  autocomplete="off" [formControl]="otp" placeholder="123456" minlength="6" maxlength="6" autofocus required>
           <mat-hint>It may take a few minutes to receive the OTP</mat-hint>
           <mat-error *ngIf="this.otp.invalid">Incorrect OTP, please try again.</mat-error>
         </mat-form-field>

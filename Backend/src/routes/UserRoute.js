@@ -57,11 +57,29 @@ userRouter.post('/dupeEmailCheck', (req, res) => {
     })
 });
 
+// userRouter.post('/searchuser', (req, res) => {
+//     var username = req.body.username;
+//     UserData.find({ username: username }, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(data => {
+//         if (data[0]) {
+//             res.send({ "message": "found", "user": data[0] });
+//         }
+//         else {
+//             res.send({ "message": "notfound" });
+//         }
+//     })
+// });
+
 userRouter.post('/searchuser', (req, res) => {
-    var username = req.body.username;
-    UserData.find({ username: username }, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(data => {
+    var searchterm = req.body.username;
+    UserData.find({}, { firstName: 1, lastName: 1, username: 1, picture: 1, _id: 0, }).then(data => {
         if (data[0]) {
-            res.send({ "message": "found", "user": data[0] });
+            let users = data.filter(item => item.username.startsWith(searchterm));
+            if (users) {
+                res.send({ "message": "found", "users": users });
+            }
+            else {
+                res.send({ "message": "notfound" });
+            }
         }
         else {
             res.send({ "message": "notfound" });

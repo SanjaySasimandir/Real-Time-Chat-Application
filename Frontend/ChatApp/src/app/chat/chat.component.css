@@ -41,6 +41,22 @@ mat-drawer {
     padding-top: 1.34375em;
 }
 
+.profile-icon {
+    height: 2.5rem !important;
+    width: 2.5rem !important;
+    border-radius: 1.5rem !important;
+    cursor: pointer;
+}
+
+mat-tab {
+    height: calc(100% + 2rem) !important;
+}
+
+.mat-tab-body-content {
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
 .card-avatar {
     background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
     background-size: cover;
@@ -50,6 +66,25 @@ mat-drawer {
 mat-card-subtitle {
     padding-bottom: 0;
     margin-bottom: 0;
+}
+
+.search-results-wrapper {
+    background: #3f51b5;
+    margin-top: -1.34375em;
+    padding-top: 0.5px;
+    padding-bottom: 0.5px;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    position: absolute;
+    width: 100%;
+    /* position: fixed; */
+    /* width: 544px; */
+    z-index: 1000;
+}
+
+.divider-margin {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
 }
 
 .user-card {

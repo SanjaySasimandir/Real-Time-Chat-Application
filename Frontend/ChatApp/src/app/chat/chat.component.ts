@@ -29,30 +29,37 @@ export class ChatComponent implements OnInit {
   }
 
   searchItem = new FormControl('');
-  searchResult = new ContactModel('', '', '', '');
+  searchResults: ContactModel[] = [];
   searchLoadingEnable = false;
   searchUser() {
+    this.viewSearchResults = true;
     this.searchLoadingEnable = true;
-    this.searchResult = { username: '', firstName: '', lastName: '', picture: '' };
-    this.userAuth.userSearch(this.searchItem.value).subscribe(data => {
-      if (data.user) {
+    this.searchResults = [];
+    if (this.searchItem.value.length >= 3) {
+      this.userAuth.userSearch(this.searchItem.value).subscribe(data => {
+        if (data.users) {
+          this.searchLoadingEnable = false;
+          this.searchResults = data.users;
+        }
         this.searchLoadingEnable = false;
-        this.searchResult = data.user;
-      }
-      this.searchLoadingEnable = false;
-    });
+      });
+    }
   }
   selectContactFromSearch(searchContact: ContactModel) {
     console.log(this.contacts.filter(contact => contact.username === searchContact.username));
     this.selectedContact = this.contacts.filter(contact => contact.username === searchContact.username)[0];
-    this.child.ngOnInit();
+    setTimeout(() => {
+      this.refreshchild(this.selectedContact);
+    }, 100);
   }
 
   contacts: ContactModel[] = [];
   noContacts = false;
   mutedContacts: string[] = [];
   blockedContacts: string[] = [];
+  spinnerEnabled: boolean = true;
   loadContacts() {
+    this.spinnerEnabled = true;
     this.webSocket.emit('send contacts request', (localStorage.getItem('username')));
     this.webSocket.listen('receive contacts').subscribe((data: any) => {
       if (data.message == "success") {
@@ -62,9 +69,10 @@ export class ChatComponent implements OnInit {
         this.mutedContacts = data.mutedContacts;
         this.blockedContacts = data.blockedContacts;
         this.noContacts = false;
-      }
-      else {
-        this.noContacts = true;
+        if (!data.contacts[0]) {
+          this.noContacts = true;
+        }
+        this.spinnerEnabled = false;
       }
     })
   }
@@ -110,7 +118,19 @@ export class ChatComponent implements OnInit {
     return !!this.contacts.filter(contact => contact.username == name).length
   }
 
+  viewSearchResults: boolean = false;
+  hideSearchResults() {
+    setTimeout(() => {
+      this.viewSearchResults = false;
+    }, 300);
+  }
+
+  profilePicture: string = '';
+
   ngOnInit(): void {
+    this.webSocket.listen('get profile picture').subscribe((data: any) => {
+      this.profilePicture = data.picture;
+    })
     this.loadContacts();
     this.loadOnlineContacts();
     this.webSocket.emit('id', localStorage.getItem('username'));
@@ -120,7 +140,6 @@ export class ChatComponent implements OnInit {
     this.webSocket.listen('refresh online contacts').subscribe(status => {
       this.loadOnlineContacts();
     })
-
 
   }
 

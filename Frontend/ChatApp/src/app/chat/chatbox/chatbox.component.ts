@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { ContactModel } from 'src/app/models/contact.model';
 import { ChatModel } from 'src/app/models/chat.model';
 import { SendMessageModel } from 'src/app/models/sendMessage.model';
@@ -23,32 +22,12 @@ export class ChatboxComponent implements OnInit {
 
   @Output() contactsrefresh = new EventEmitter();
 
-  constructor(private activatedRouter: ActivatedRoute, private userAuth: UserauthService, private webSocket: WebSocketService) { }
+  constructor(private userAuth: UserauthService, private webSocket: WebSocketService) { }
 
 
   newMessage = new FormControl('');
   uploadToggle: boolean = false;
   moment = moment()
-
-  inputBoxSize = 1;
-  inputBoxResize() {
-    let lineCount = this.newMessage.value.split('\n').length;
-    if (lineCount <= 5) {
-      this.inputBoxSize = lineCount;
-    }
-    console.log(lineCount)
-  }
-
-  scrollHeightArray = [53];
-  inputBoxResize1(scrollHeight: any) {
-    // console.log(scrollHeight)
-    if (!this.scrollHeightArray.includes(scrollHeight)) {
-      console.log('added', scrollHeight, this.scrollHeightArray)
-      this.scrollHeightArray.push(scrollHeight);
-    }
-    this.inputBoxSize = this.scrollHeightArray.length;
-
-  }
 
   muted = false;
   blocked = false;
@@ -99,24 +78,9 @@ export class ChatboxComponent implements OnInit {
       this.chatIsLoading = false;
     });
   }
-  ngOnInit(): void {
-    this.chatIsLoading = true;
-    this.getMuteBlockStatus();
-    this.uploadToggle = false;
-    this.newMessage.setValue('');
-    console.log('here' + this.contact.username)
-    this.webSocket.emit('join chat', this.contact.username);
 
-    // this.webSocket.listen('receive old messages').subscribe((chat: any) => {
-    //   this.messagesInChat = chat;
-    //   this.chatIsLoading = false;
-    //   console.log(this.messagesInChat)
-    // });
-    this.webSocket.listen('receive message from contact').subscribe((thing: any) => {
-      this.passMessage(thing)
-    });
 
-  }
+  // Image Uploads 
   selectedImage!: FileList;
   imageSelected(element: any) {
     this.selectedImage = element.target.files;
@@ -160,15 +124,33 @@ export class ChatboxComponent implements OnInit {
 
   username = localStorage.getItem('username') || '';
   sendMessage() {
-    let messageToSend = new SendMessageModel(this.username, this.contact.username, this.newMessage.value, 'text', moment().format('lll'));
-    this.webSocket.emit('send message', messageToSend);
-    let message = { messageContent: messageToSend.message, messageType: messageToSend.messageType, messageSender: messageToSend.username, messageTime: messageToSend.messageTime };
-    this.messagesInChat.chat.push(message);
-    this.newMessage.setValue('');
+    if (this.newMessage.value.trim()) {
+      let messageToSend = new SendMessageModel(this.username, this.contact.username, this.newMessage.value, 'text', moment().format('lll'));
+      this.webSocket.emit('send message', messageToSend);
+      let message = { messageContent: messageToSend.message, messageType: messageToSend.messageType, messageSender: messageToSend.username, messageTime: messageToSend.messageTime };
+      this.messagesInChat.chat.push(message);
+      this.newMessage.setValue('');
+    }
   }
 
-  consoleThis($data: any) {
-    console.log($data);
+  enterPressed(event: any) {
+
+  }
+
+  ngOnInit(): void {
+    this.messageTimes = [];
+    this.messagesInChat.chat = [];
+    this.chatIsLoading = true;
+    this.getMuteBlockStatus();
+    this.uploadToggle = false;
+    this.newMessage.setValue('');
+    console.log('here' + this.contact.username)
+    this.webSocket.emit('join chat', this.contact.username);
+
+    this.webSocket.listen('receive message from contact').subscribe((thing: any) => {
+      this.passMessage(thing)
+    });
+
   }
 
 

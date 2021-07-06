@@ -47,6 +47,9 @@ io.on('connection', (socket) => {
         console.log(data)
         socket.join(id);
         socket.emit('test event', "hello" + id);
+        UserData.find({ username: id }, { picture: 1 }).then(data => {
+            socket.emit('get profile picture', { "picture": data[0].picture });
+        })
         UserData.find({ username: id }, { availability: 1, contacts: 1 }).then(data => {
             if (data[0]) {
                 data[0].availability = "online";
@@ -109,7 +112,7 @@ function getContacts(username) {
                 data[0].contacts.forEach(contact => {
                     contactsInRecentOrder.push(contactsFromDB.filter(item => item.username == contact)[0])
                 });
-                console.log(username, data[0].contacts)
+                // console.log(username, data[0].contacts)
                 contactsToSend = { "message": "success", "contacts": contactsInRecentOrder.reverse(), "mutedContacts": data[0].mutedContacts, "blockedContacts": data[0].blockedContacts, "contactNamesList": data[0].contacts };
                 io.to(username).emit('receive contacts', contactsToSend);
             });

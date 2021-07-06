@@ -10,11 +10,11 @@
                 <mat-card-subtitle class="text-center">
                     to continue
                 </mat-card-subtitle>
-                <form (ngSubmit)="this.usernamePage = !this.usernamePage">
+                <form (ngSubmit)="this.usernamePage = !this.usernamePage; setPasswordFocus()">
                     <mat-form-field class="col-12" appearance="outline">
                         <mat-icon matPrefix color="primary">alternate_email</mat-icon>
                         <mat-label>Enter your username</mat-label>
-                        <input matInput [formControl]="username" placeholder="johndoe12" maxlength="16" autofocus
+                        <input matInput [formControl]="username" placeholder="johndoe12" maxlength="16" autocomplete="off" autofocus #usernameInput="matInput"
                             required>
                         <mat-error *ngIf="this.username.invalid">Please enter a username</mat-error>
                     </mat-form-field>
@@ -46,7 +46,7 @@
                         <mat-icon matPrefix color="primary">lock</mat-icon>
                         <mat-label>Enter your password</mat-label>
                         <input matInput (input)="loginError=false" [type]="hidePassword ? 'password' : 'text'"
-                            [formControl]="password" placeholder="Enter your password" maxlength="20" required>
+                            [formControl]="password" placeholder="Enter your password" maxlength="20" autocomplete="off" #passwordInput="matInput" required>
                         <button mat-icon-button matSuffix *ngIf="this.password.value!=''"
                             (click)="this.password.setValue('')" type="button">
                             <mat-icon>close</mat-icon>
@@ -60,7 +60,7 @@
 
                     <div class=" col-12 d-flex justify-content-between">
                         <button mat-button color="primary" type="button"
-                            (click)="usernamePage=!usernamePage; loginError=false">Back</button>
+                            (click)="usernamePage=!usernamePage; loginError=false;setUsernameFocus();">Back</button>
                         <button mat-raised-button color="primary" type="submit"
                             [disabled]="this.password.invalid">Login</button>
                     </div>
